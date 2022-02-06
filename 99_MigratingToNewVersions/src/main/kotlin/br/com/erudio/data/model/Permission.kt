@@ -10,10 +10,10 @@ class Permission : GrantedAuthority, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    var id: Long? = null
+    val id: Long? = null
 
     @Column(name = "description")
-    var description: String? = null
+    val description: String? = null
 
     override fun getAuthority(): String {
         return description!!

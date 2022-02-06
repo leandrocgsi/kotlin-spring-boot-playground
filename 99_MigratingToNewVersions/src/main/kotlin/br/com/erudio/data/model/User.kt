@@ -12,28 +12,28 @@ class User : UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    var id: Long? = null
+    val id: Long? = null
 
     @Column(name = "user_name", unique = true)
-    var userName: String? = null
+    val userName: String? = null
 
     @Column(name = "full_name")
-    var fullName: String? = null
+    val fullName: String? = null
 
     @Column(name = "password")
-    private var password: String? = null
+    private val password: String? = null
 
     @Column(name = "account_non_expired")
-    var accountNonExpired: Boolean? = null
+    val accountNonExpired: Boolean? = null
 
     @Column(name = "account_non_locked")
-    var accountNonLocked: Boolean? = null
+    val accountNonLocked: Boolean? = null
 
     @Column(name = "credentials_non_expired")
-    var credentialsNonExpired: Boolean? = null
+    val credentialsNonExpired: Boolean? = null
 
     @Column(name = "enabled")
-    var enabled: Boolean? = null
+    val enabled: Boolean? = null
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -41,7 +41,7 @@ class User : UserDetails, Serializable {
         joinColumns = [JoinColumn(name = "id_user")],
         inverseJoinColumns = [JoinColumn(name = "id_permission")]
     )
-    var permissions: List<Permission?>? = null
+    val permissions: List<Permission?>? = null
     val roles: List<String?>
         get() {
             val roles: MutableList<String?> = ArrayList()

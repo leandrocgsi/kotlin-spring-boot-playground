@@ -8,22 +8,22 @@ import jakarta.persistence.*
 class Person : Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    val id: Long? = null
 
     @Column(name = "first_name", nullable = false, length = 80)
-    var firstName: String? = null
+    val firstName: String? = null
 
     @Column(name = "last_name", nullable = false, length = 80)
-    var lastName: String? = null
+    val lastName: String? = null
 
     @Column(nullable = false, length = 100)
-    var address: String? = null
+    val address: String? = null
 
     @Column(nullable = false, length = 6)
-    var gender: String? = null
+    val gender: String? = null
 
     @Column(nullable = false)
-    var enabled: Boolean? = null
+    val enabled: Boolean? = null
 
     companion object {
         private const val serialVersionUID = 1L

@@ -9,6 +9,7 @@ import java.util.*
 
 @JsonPropertyOrder("id", "author", "launchDate", "price", "title")
 class BookVO : RepresentationModel<BookVO?>(), Serializable {
+
 	@Mapping("id")
 	@JsonProperty("id")
 	var key: Long? = null

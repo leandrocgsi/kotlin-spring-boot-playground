@@ -9,20 +9,20 @@ import jakarta.persistence.*
 class Book : Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    val id: Long? = null
 
     @Column(name = "author", nullable = false, length = 180)
-    var author: String? = null
+    val author: String? = null
 
     @Column(name = "launch_date", nullable = false)
     @Temporal(TemporalType.DATE)
-    var launchDate: Date? = null
+    val launchDate: Date? = null
 
     @Column(nullable = false)
-    var price: Double? = null
+    val price: Double? = null
 
     @Column(nullable = false, length = 250)
-    var title: String? = null
+    val title: String? = null
 
     companion object {
         private const val serialVersionUID = 1L
