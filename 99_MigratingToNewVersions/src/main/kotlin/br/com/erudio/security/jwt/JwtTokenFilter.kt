@@ -12,7 +12,7 @@ import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 
 class JwtTokenFilter(@field:Autowired private val tokenProvider: JwtTokenProvider) : GenericFilterBean() {
-	//@Throws(IOException::class, ServletException::class)
+	@Throws(IOException::class, ServletException::class)
 	override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
 		val token: String = tokenProvider.resolveToken(request as HttpServletRequest)
 		if (token != null && tokenProvider.validateToken(token)) {
