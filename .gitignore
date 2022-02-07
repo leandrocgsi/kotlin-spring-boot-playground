@@ -26,6 +26,7 @@
 
 #Gradle temporary files
 target/
+.mvn/
 
 #Eclipse files
 **/.project
@@ -39,6 +40,8 @@ blog/bin/
 **/*.iml
 **/.idea
 **/.gradle
+HELP.md
+mvnw.cmd
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*

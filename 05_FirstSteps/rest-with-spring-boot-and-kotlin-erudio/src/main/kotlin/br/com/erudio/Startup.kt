@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class RestWithSpringBootAndKotlinErudioApplication
+class Startup
 
 fun main(args: Array<String>) {
-	runApplication<RestWithSpringBootAndKotlinErudioApplication>(*args)
+	runApplication<Startup>(*args)
 }
