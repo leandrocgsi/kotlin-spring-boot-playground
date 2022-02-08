@@ -24,10 +24,7 @@ class MathController3 {
 
     @RequestMapping(value = ["/subtraction/{numberOne}/{numberTwo}"], method = [RequestMethod.GET])
     @Throws(Exception::class)
-    fun subtraction(
-        @PathVariable("numberOne") numberOne: String?,
-        @PathVariable("numberTwo") numberTwo: String?
-    ): Double {
+    fun subtraction(@PathVariable("numberOne") numberOne: String?, @PathVariable("numberTwo") numberTwo: String?): Double {
         if (!NumberConverter.isNumeric(numberOne) || !NumberConverter.isNumeric(numberTwo)) {
             throw UnsuportedMathOperationException("Please set a numeric value!")
         }
@@ -36,10 +33,7 @@ class MathController3 {
 
     @RequestMapping(value = ["/multiplication/{numberOne}/{numberTwo}"], method = [RequestMethod.GET])
     @Throws(Exception::class)
-    fun multiplication(
-        @PathVariable("numberOne") numberOne: String?,
-        @PathVariable("numberTwo") numberTwo: String?
-    ): Double {
+    fun multiplication(@PathVariable("numberOne") numberOne: String?, @PathVariable("numberTwo") numberTwo: String?): Double {
         if (!NumberConverter.isNumeric(numberOne) || !NumberConverter.isNumeric(numberTwo)) {
             throw UnsuportedMathOperationException("Please set a numeric value!")
         }
