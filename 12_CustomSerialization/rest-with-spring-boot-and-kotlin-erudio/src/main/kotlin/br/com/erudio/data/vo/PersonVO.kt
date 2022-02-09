@@ -1,24 +1,25 @@
 package br.com.erudio.data.vo
 
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import java.io.Serializable
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+//@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonPropertyOrder("id", "address", "first_name", "last_name", "gender")
-class PersonVO : Serializable {
+data class PersonVO (
 
-    var id: Long? = null
+    var id: Long = 0,
 
-    @JsonProperty("first_name")
-    var firstName: String? = null
+    @field:JsonProperty("first_name")
+    var firstName: String = "",
 
-    @JsonProperty("last_name")
-    var lastName: String? = null
-    
-    var address: String? = null
+    @field:JsonProperty("last_name")
+    var lastName: String = "",
 
-    @JsonIgnore
-    var gender: String? = null
-}
+    var address: String = "",
+
+    @field:JsonIgnore
+    var gender: String = ""
+)
