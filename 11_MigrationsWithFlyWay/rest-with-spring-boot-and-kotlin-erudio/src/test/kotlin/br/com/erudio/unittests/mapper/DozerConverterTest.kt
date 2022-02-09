@@ -1,7 +1,6 @@
 package br.com.erudio.unittests.mapper
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.util.List
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import br.com.erudio.data.vo.PersonVO
