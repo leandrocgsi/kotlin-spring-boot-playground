@@ -4,6 +4,10 @@ spring:
     url: jdbc:mysql://localhost:3306/rest_with_spring_boot_kotlin_erudio?useTimezone=true&serverTimezone=UTC
     username: root
     password: admin123
+  flyway:
+      url: jdbc:mysql://localhost:3306/rest_with_spring_boot_kotlin_erudio?useTimezone=true&serverTimezone=UTC
+      user: root
+      password: admin123
   jpa:
     hibernate:
       ddl-auto: update
