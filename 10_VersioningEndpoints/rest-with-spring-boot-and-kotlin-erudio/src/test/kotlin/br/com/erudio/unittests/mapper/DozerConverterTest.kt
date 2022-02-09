@@ -1,12 +1,13 @@
 package br.com.erudio.unittests.mapper
 
-import br.com.erudio.data.vo.v1.PersonVO
+import org.junit.jupiter.api.Assertions.assertEquals
+import java.util.List
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import br.com.erudio.data.vo.PersonVO
 import br.com.erudio.mapper.DozerConverter
 import br.com.erudio.model.Person
 import br.com.erudio.unittests.mapper.mocks.MockPerson
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 
 class DozerConverterTest {
 
