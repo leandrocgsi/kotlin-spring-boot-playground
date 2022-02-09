@@ -1,4 +1,3 @@
-/**
 package br.com.erudio.unittests.mapper
 
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,6 +12,7 @@ import br.com.erudio.unittests.mapper.mocks.MockPerson
 class DozerConverterTest {
 
     var inputObject: MockPerson? = null
+
     @BeforeEach
     fun setUp() {
         inputObject = MockPerson()
@@ -20,7 +20,7 @@ class DozerConverterTest {
 
     @Test
     fun parseEntityToVOTest() {
-        val output: PersonVO = DozerConverter.parseObject(inputObject.mockEntity(), PersonVO::class.java)
+        val output: PersonVO = DozerConverter.parseObject(inputObject!!.mockEntity(), PersonVO::class.java)
         assertEquals(0.toLong(), output.id)
         assertEquals("First Name Test0", output.firstName)
         assertEquals("Last Name Test0", output.lastName)
@@ -28,7 +28,7 @@ class DozerConverterTest {
         assertEquals("Male", output.gender)
     }
 
-    @Test
+    /*@Test
     fun parseEntityListToVOListTest() {
         val outputList: ArrayList<PersonVO> =
             DozerConverter.parseListObjects(inputObject.mockEntityList(), PersonVO::class.java)
@@ -50,11 +50,11 @@ class DozerConverterTest {
         assertEquals("Last Name Test12", outputTwelve.lastName)
         assertEquals("Addres Test12", outputTwelve.address)
         assertEquals("Male", outputTwelve.gender)
-    }
+    }*/
 
     @Test
     fun parseVOToEntityTest() {
-        val output: Person = DozerConverter.parseObject(inputObject.mockVO(), Person::class.java)
+        val output: Person = DozerConverter.parseObject(inputObject!!.mockVO(), Person::class.java)
         assertEquals(0.toLong(), output.id)
         assertEquals("First Name Test0", output.firstName)
         assertEquals("Last Name Test0", output.lastName)
@@ -62,7 +62,7 @@ class DozerConverterTest {
         assertEquals("Male", output.gender)
     }
 
-    @Test
+    /*@Test
     fun parserVOListToEntityListTest() {
         val outputList: ArrayList<Person> = DozerConverter.parseListObjects(inputObject.mockVOList(), Person::class.java)
         val outputZero: Person = outputList[0]
@@ -83,6 +83,5 @@ class DozerConverterTest {
         assertEquals("Last Name Test12", outputTwelve.lastName)
         assertEquals("Addres Test12", outputTwelve.address)
         assertEquals("Male", outputTwelve.gender)
-    }
+    }*/
 }
- */
