@@ -8,7 +8,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 @Configuration
 class JacksonConfiguration {
-    
+
     @Bean
     fun mappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter {
         return MappingJackson2HttpMessageConverter().apply {

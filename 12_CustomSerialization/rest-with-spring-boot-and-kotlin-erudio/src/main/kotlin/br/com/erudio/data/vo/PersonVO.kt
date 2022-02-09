@@ -1,5 +1,10 @@
 package br.com.erudio.data.vo
 
+// https://www.baeldung.com/kotlin/jackson-kotlin
+// https://www.http4k.org/guide/howto/create_a_custom_json_marshaller/
+// https://proandroiddev.com/parsing-optional-values-with-jackson-and-kotlin-36f6f63868ef
+// https://hceris.com/painless-json-with-kotlin-and-jackson/
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
