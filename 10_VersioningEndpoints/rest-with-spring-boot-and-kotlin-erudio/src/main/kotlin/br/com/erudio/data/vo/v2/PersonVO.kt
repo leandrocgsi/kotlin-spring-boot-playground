@@ -2,7 +2,7 @@ package br.com.erudio.data.vo.v2
 
 import java.util.*
 
-class PersonVOV2 (
+class PersonVO (
 	var id: Long = 0,
 	var firstName: String = "",
 	var lastName: String = "",

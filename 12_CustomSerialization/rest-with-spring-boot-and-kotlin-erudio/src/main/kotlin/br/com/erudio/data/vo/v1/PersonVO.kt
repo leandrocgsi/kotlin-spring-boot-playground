@@ -1,4 +1,4 @@
-package br.com.erudio.data.vo
+package br.com.erudio.data.vo.v1
 
 // https://www.baeldung.com/kotlin/jackson-kotlin
 // https://www.http4k.org/guide/howto/create_a_custom_json_marshaller/
