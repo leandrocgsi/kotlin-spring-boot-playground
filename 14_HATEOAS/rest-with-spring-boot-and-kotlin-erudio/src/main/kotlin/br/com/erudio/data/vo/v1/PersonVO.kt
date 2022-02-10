@@ -1,4 +1,4 @@
-package br.com.erudio.data.vo
+package br.com.erudio.data.vo.v1
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder

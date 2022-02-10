@@ -3,7 +3,7 @@ package br.com.erudio.unittests.mapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import br.com.erudio.data.vo.PersonVO
+import br.com.erudio.data.vo.v1.PersonVO
 import br.com.erudio.mapper.DozerConverter
 import br.com.erudio.model.Person
 import br.com.erudio.unittests.mapper.mocks.MockPerson
@@ -20,7 +20,7 @@ class DozerConverterTest {
     @Test
     fun parseEntityToVOTest() {
         val output: PersonVO = DozerConverter.parseObject(inputObject!!.mockEntity(), PersonVO::class.java)
-        assertEquals(0.toLong(), output.id)
+        assertEquals(0.toLong(), output.key)
         assertEquals("First Name Test0", output.firstName)
         assertEquals("Last Name Test0", output.lastName)
         assertEquals("Addres Test0", output.address)
@@ -34,21 +34,21 @@ class DozerConverterTest {
 
         val outputZero: PersonVO = outputList[0]
 
-        assertEquals(0.toLong(), outputZero.id)
+        assertEquals(0.toLong(), outputZero.key)
         assertEquals("First Name Test0", outputZero.firstName)
         assertEquals("Last Name Test0", outputZero.lastName)
         assertEquals("Addres Test0", outputZero.address)
         assertEquals("Male", outputZero.gender)
 
         val outputSeven: PersonVO = outputList[7]
-        assertEquals(7.toLong(), outputSeven.id)
+        assertEquals(7.toLong(), outputSeven.key)
         assertEquals("First Name Test7", outputSeven.firstName)
         assertEquals("Last Name Test7", outputSeven.lastName)
         assertEquals("Addres Test7", outputSeven.address)
         assertEquals("Female", outputSeven.gender)
 
         val outputTwelve: PersonVO = outputList[12]
-        assertEquals(12.toLong(), outputTwelve.id)
+        assertEquals(12.toLong(), outputTwelve.key)
         assertEquals("First Name Test12", outputTwelve.firstName)
         assertEquals("Last Name Test12", outputTwelve.lastName)
         assertEquals("Addres Test12", outputTwelve.address)
