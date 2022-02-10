@@ -9,7 +9,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "person")
-class Person (
+data class Person (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
