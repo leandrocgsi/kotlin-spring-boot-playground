@@ -15,7 +15,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: false
-  # mvc:
-    # pathmatch:
-      # use-suffix-pattern: true
-      # matching-strategy: ant-path-matcher
+
+springdoc:
+  pathsToMatch: /api/**/v1/**
+  swagger-ui:
+    use-root-path: true
