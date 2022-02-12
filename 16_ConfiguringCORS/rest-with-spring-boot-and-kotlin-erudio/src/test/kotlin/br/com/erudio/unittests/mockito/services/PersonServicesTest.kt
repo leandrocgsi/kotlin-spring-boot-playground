@@ -22,7 +22,7 @@ import java.util.*
 @ExtendWith(MockitoExtension::class)
 class PersonServicesTest {
 
-    var input: MockPerson? = null
+    private var input: MockPerson? = null
 
     @InjectMocks
     private val service: PersonServices? = null
@@ -47,7 +47,7 @@ class PersonServicesTest {
         Assertions.assertNotNull(personOne)
         Assertions.assertNotNull(personOne.key)
         Assertions.assertNotNull(personOne.links)
-        Assertions.assertTrue(personOne.toString().contains("links: [</person/1>;rel=\"self\"]"))
+        Assertions.assertTrue(personOne.toString().contains("""links: [</person/1>;rel="self"]"""))
         Assertions.assertEquals("Addres Test1", personOne.address)
         Assertions.assertEquals("First Name Test1", personOne.firstName)
         Assertions.assertEquals("Last Name Test1", personOne.lastName)
@@ -81,7 +81,7 @@ class PersonServicesTest {
         Assertions.assertNotNull(result)
         Assertions.assertNotNull(result!!.key)
         Assertions.assertNotNull(result.links)
-        Assertions.assertTrue(result.toString().contains("links: [</person/1>;rel=\"self\"]"))
+        Assertions.assertTrue(result.toString().contains("""links: [</person/1>;rel="self"]"""))
         Assertions.assertEquals("Addres Test1", result.address)
         Assertions.assertEquals("First Name Test1", result.firstName)
         Assertions.assertEquals("Last Name Test1", result.lastName)
@@ -92,7 +92,7 @@ class PersonServicesTest {
     fun testCreate() {
         val entity = input!!.mockEntity(1)
 
-        val persisted = entity.copy();
+        val persisted = entity.copy()
         persisted.id = 1L
 
         val vo = input!!.mockVO(1)
@@ -104,7 +104,7 @@ class PersonServicesTest {
         Assertions.assertNotNull(result)
         Assertions.assertNotNull(result!!.key)
         Assertions.assertNotNull(result.links)
-        Assertions.assertTrue(result.toString().contains("links: [</person/1>;rel=\"self\"]"))
+        Assertions.assertTrue(result.toString().contains("""links: [</person/1>;rel="self"]"""))
         Assertions.assertEquals("Addres Test1", result.address)
         Assertions.assertEquals("First Name Test1", result.firstName)
         Assertions.assertEquals("Last Name Test1", result.lastName)
@@ -126,7 +126,7 @@ class PersonServicesTest {
         val entity = input!!.mockEntity(1)
         entity.id = 1L
 
-        val persisted = entity.copy();
+        val persisted = entity.copy()
         persisted.id = 1L
 
         val vo = input!!.mockVO(1)
@@ -137,7 +137,7 @@ class PersonServicesTest {
         Assertions.assertNotNull(result)
         Assertions.assertNotNull(result!!.key)
         Assertions.assertNotNull(result.links)
-        Assertions.assertTrue(result.toString().contains("links: [</person/1>;rel=\"self\"]"))
+        Assertions.assertTrue(result.toString().contains("""links: [</person/1>;rel="self"]"""))
         Assertions.assertEquals("Addres Test1", result.address)
         Assertions.assertEquals("First Name Test1", result.firstName)
         Assertions.assertEquals("Last Name Test1", result.lastName)
