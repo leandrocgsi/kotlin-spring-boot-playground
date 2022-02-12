@@ -18,7 +18,19 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class PersonControllerJsonTest : AbstractIntegrationTest() {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class PersonControllerCorsWithJsonTest : AbstractIntegrationTest() {
+
+    private var specification: RequestSpecification? = null
+    private var objectMapper: ObjectMapper? = null
+    private var person: PersonVO? = null
+
+    @BeforeAll
+    fun setup() {
+        objectMapper = ObjectMapper()
+        objectMapper!!.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        person = PersonVO()
+    }
 
     @Test
     @Order(1)
@@ -35,17 +47,17 @@ class PersonControllerJsonTest : AbstractIntegrationTest() {
                 .addFilter(RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(ResponseLoggingFilter(LogDetail.ALL))
             .build()
-        
+
         val content = RestAssured.given().spec(specification)
             .contentType(TestsConfig.CONTENT_TYPE_JSON)
-            .body(person)
-            .`when`()
-            .post()
+                .body(person)
+                .`when`()
+                .post()
             .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .asString()
+                .statusCode(200)
+                    .extract()
+                    .body()
+                    .asString()
         val createdPerson = objectMapper!!.readValue(
             content,
             PersonVO::class.java
@@ -163,18 +175,5 @@ class PersonControllerJsonTest : AbstractIntegrationTest() {
         person!!.lastName = "Stallman"
         person!!.address = "New York City, New York, US"
         person!!.gender = "Male"
-    }
-
-    companion object {
-        private var specification: RequestSpecification? = null
-        private var objectMapper: ObjectMapper? = null
-        private var person: PersonVO? = PersonVO()
-
-        @BeforeAll
-        fun setup() {
-            objectMapper = ObjectMapper()
-            objectMapper!!.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            //person = PersonVO()
-        }
     }
 }
