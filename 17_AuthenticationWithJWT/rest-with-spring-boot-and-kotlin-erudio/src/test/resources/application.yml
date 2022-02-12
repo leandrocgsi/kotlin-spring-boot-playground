@@ -1,3 +1,8 @@
+security:
+  jwt:
+    token:
+      secret-key: 53cr37
+      expire-length: 3600000
 server:
   port: 8888
 spring:
@@ -14,6 +19,8 @@ spring:
     show-sql: false
 
 springdoc:
-  pathsToMatch: /api/**/v1/**
+  pathsToMatch:
+    - /auth/**
+    - /api/**/v1/**
   swagger-ui:
     use-root-path: true

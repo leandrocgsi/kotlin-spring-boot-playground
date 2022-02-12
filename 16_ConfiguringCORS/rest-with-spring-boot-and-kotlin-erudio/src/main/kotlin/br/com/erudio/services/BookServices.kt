@@ -17,7 +17,7 @@ class BookServices {
 
     // https://github.com/olszewskimichal/Hateoas-SpringBoot-Kotlin/blob/master/src/main/kotlin/com/example/hateoas/kotlin/DemoApplication.kt
     @Autowired
-    private lateinit  var repository: BookRepository
+    private lateinit var repository: BookRepository
 
     fun findAll(): List<BookVO>? {
         val books = DozerConverter.parseListObjects(repository.findAll(), BookVO::class.java)
