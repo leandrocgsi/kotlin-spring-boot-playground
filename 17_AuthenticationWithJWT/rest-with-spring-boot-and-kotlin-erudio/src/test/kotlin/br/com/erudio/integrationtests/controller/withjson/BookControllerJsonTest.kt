@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
+import io.restassured.common.mapper.TypeRef
 import io.restassured.filter.log.LogDetail
 import io.restassured.filter.log.RequestLoggingFilter
 import io.restassured.filter.log.ResponseLoggingFilter
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
+import java.util.List
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation::class)
@@ -161,23 +163,21 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
             .statusCode(204)
     }
 
-    /**
     @Test
     @Order(6)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val response: Array<BookVO> = given().spec(specification)
+        val content = given().spec(specification)
             .contentType(TestsConfig.CONTENT_TYPE_JSON)
-            .queryParams("page", 0, "limit", 5, "direction", "asc")
             .`when`()
             .get()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`<Array<BookVO>>(Array<BookVO>::class.java, objectMapper)
+            .`as`(object : TypeRef<List<BookVO?>?>() {})
 
-        val foundBookOne: BookVO = content[0]
+        val foundBookOne: BookVO? = content?.get(0)
 
         assertNotNull(foundBookOne!!.id)
         assertNotNull(foundBookOne!!.title)
@@ -188,7 +188,7 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
         assertEquals("Michael C. Feathers", foundBookOne!!.author)
         assertEquals(49.00, foundBookOne!!.price)
 
-        val foundBookFive: BookVO = content[4]
+        val foundBookFive: BookVO? = content?.get(4)
 
         assertNotNull(foundBookFive!!.id)
         assertNotNull(foundBookFive!!.title)
@@ -199,7 +199,6 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
         assertEquals("Steve McConnell", foundBookFive!!.author)
         assertEquals(58.0, foundBookFive!!.price)
     }
-    */
 
     private fun mockBook() {
         book!!.title = "Docker Deep Dive"
