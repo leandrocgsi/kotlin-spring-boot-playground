@@ -190,5 +190,6 @@ class PersonControllerCorsWithJsonTest : AbstractIntegrationTest() {
         person!!.lastName = "Stallman"
         person!!.address = "New York City, New York, US"
         person!!.gender = "Male"
+        person!!.enabled = true
     }
 }

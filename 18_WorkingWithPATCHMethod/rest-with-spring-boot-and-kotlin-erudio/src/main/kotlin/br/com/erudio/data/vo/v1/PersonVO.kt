@@ -15,4 +15,5 @@ class PersonVO : RepresentationModel<PersonVO>() {
     var lastName: String? = null
     var address: String? = null
     var gender: String? = null
+    var enabled: Boolean = true
 }

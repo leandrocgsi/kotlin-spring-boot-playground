@@ -10,6 +10,7 @@ import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 
 @Service
@@ -55,6 +56,17 @@ class PersonServices {
         entity.address = person.address!!
         entity.gender = person.gender!!
         var personVO: PersonVO? = DozerConverter.parseObject(repository.save(entity), PersonVO::class.java)
+        val withSelfRel = WebMvcLinkBuilder.linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
+        personVO!!.add(withSelfRel)
+        return personVO
+    }
+
+    @Transactional
+    fun disablePerson(id: Long?): PersonVO? {
+        repository.disablePersons(id)
+        val entity = repository.findById(id!!)
+            .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
+        val personVO: PersonVO? = DozerConverter.parseObject(entity, PersonVO::class.java)
         val withSelfRel = WebMvcLinkBuilder.linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
         personVO!!.add(withSelfRel)
         return personVO

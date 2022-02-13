@@ -100,6 +100,7 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         assertEquals("Stallman", createdPerson.lastName)
         assertEquals("New York City, New York, US", createdPerson.address)
         assertEquals("Male", createdPerson.gender)
+        assertEquals(true, createdPerson.enabled)
     }
 
     @Test
@@ -128,10 +129,43 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         assertEquals("Matthew Stallman", updatedPerson.lastName)
         assertEquals("New York City, New York, US", updatedPerson.address)
         assertEquals("Male", updatedPerson.gender)
+        assertEquals(true, updatedPerson.enabled)
     }
 
     @Test
-    @Order(6)
+    @Order(4)
+    @Throws(JsonMappingException::class, JsonProcessingException::class)
+    fun testDisablePerson() {
+
+        person!!.enabled = false
+
+        val content: String = given().spec(specification)
+            .contentType(TestsConfig.CONTENT_TYPE_XML)
+                .pathParam("id", person!!.id)
+                .`when`()
+                .patch("{id}")
+            .then()
+                .statusCode(200)
+                        .extract()
+                        .body()
+                            .asString()
+
+        val patchedPerson: PersonVO = objectMapper!!.readValue(content, PersonVO::class.java)
+        assertNotNull(patchedPerson.id)
+        assertNotNull(patchedPerson.firstName)
+        assertNotNull(patchedPerson.lastName)
+        assertNotNull(patchedPerson.address)
+        assertNotNull(patchedPerson.gender)
+        assertEquals(patchedPerson.id, person!!.id)
+        assertEquals("Richard", patchedPerson.firstName)
+        assertEquals("Matthew Stallman", patchedPerson.lastName)
+        assertEquals("New York City, New York, US", patchedPerson.address)
+        assertEquals("Male", patchedPerson.gender)
+        assertEquals(false, patchedPerson.enabled)
+    }
+
+    @Test
+    @Order(5)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindById() {
         val content: String = given().spec(specification)
@@ -155,10 +189,11 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         assertEquals("Matthew Stallman", foundPerson.lastName)
         assertEquals("New York City, New York, US", foundPerson.address)
         assertEquals("Male", foundPerson.gender)
+        assertEquals(false, foundPerson.enabled)
     }
 
     @Test
-    @Order(7)
+    @Order(6)
     fun testDelete() {
         given().spec(specification)
             .contentType(TestsConfig.CONTENT_TYPE_XML)
@@ -170,7 +205,7 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Order(8)
+    @Order(7)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
         val content = given().spec(specification)
@@ -194,6 +229,8 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         assertEquals("Costa", foundPersonOne!!.lastName)
         assertEquals("Uberlândia - Minas Gerais - Brasil", foundPersonOne!!.address)
         assertEquals("Male", foundPersonOne!!.gender)
+        assertEquals(true, foundPersonOne.enabled)
+
         val foundPersonSix = content?.get(5)
         assertNotNull(foundPersonSix!!.id)
         assertNotNull(foundPersonSix!!.firstName)
@@ -205,10 +242,12 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         assertEquals("Paulo", foundPersonSix!!.lastName)
         assertEquals("Patos de Minas - Minas Gerais - Brasil", foundPersonSix!!.address)
         assertEquals("Male", foundPersonSix!!.gender)
+        assertEquals(true, foundPersonSix.enabled)
+
     }
 
     @Test
-    @Order(9)
+    @Order(8)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAllWithoutToken() {
         val specificationWithoutToken: RequestSpecification = RequestSpecBuilder()
@@ -230,5 +269,6 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         person!!.lastName = "Stallman"
         person!!.address = "New York City, New York, US"
         person!!.gender = "Male"
+        person!!.enabled = true
     }
 }

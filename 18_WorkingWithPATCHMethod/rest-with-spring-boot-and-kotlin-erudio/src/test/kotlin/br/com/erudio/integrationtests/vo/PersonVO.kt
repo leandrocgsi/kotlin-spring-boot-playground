@@ -9,7 +9,7 @@ import org.springframework.hateoas.RepresentationModel
 
 @XmlRootElement
 @JsonIgnoreProperties
-@JsonPropertyOrder( "id", "firstName", "lastName", "address", "gender" )
+@JsonPropertyOrder( "id", "firstName", "lastName", "address", "gender", "enabled" )
 class PersonVO : RepresentationModel<PersonVO>() {
 
     var id: Long? = null
@@ -17,4 +17,5 @@ class PersonVO : RepresentationModel<PersonVO>() {
     var lastName: String? = null
     var address: String? = null
     var gender: String? = null
+    var enabled: Boolean = true
 }

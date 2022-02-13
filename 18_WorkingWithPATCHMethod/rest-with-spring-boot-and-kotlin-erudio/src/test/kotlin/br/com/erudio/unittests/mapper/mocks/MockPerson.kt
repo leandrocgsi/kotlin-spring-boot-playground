@@ -36,6 +36,7 @@ class MockPerson {
         person.gender = if (number % 2 == 0) "Male" else "Female"
         person.id = number.toLong()
         person.lastName = "Last Name Test$number"
+        person.enabled = true
         return person
     }
 
@@ -46,6 +47,7 @@ class MockPerson {
         person.gender = if (number % 2 == 0) "Male" else "Female"
         person.key = number.toLong()
         person.lastName = "Last Name Test$number"
+        person.enabled = true
         return person
     }
 }

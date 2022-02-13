@@ -5,7 +5,13 @@ import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import br.com.erudio.services.PersonServices
 import br.com.erudio.unittests.mapper.mocks.MockPerson
-import org.junit.jupiter.api.Assertions
+
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.mockito.Mockito.`when`
+
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -41,35 +47,35 @@ class PersonServicesTest {
         val list: List<Person> = input!!.mockEntityList()
         Mockito.`when`(repository!!.findAll()).thenReturn(list)
         val persons = service!!.findAll()
-        Assertions.assertNotNull(persons)
-        Assertions.assertEquals(14, persons!!.size)
+        assertNotNull(persons)
+        assertEquals(14, persons!!.size)
         val personOne = persons[1]
-        Assertions.assertNotNull(personOne)
-        Assertions.assertNotNull(personOne.key)
-        Assertions.assertNotNull(personOne.links)
-        Assertions.assertTrue(personOne.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        Assertions.assertEquals("Addres Test1", personOne.address)
-        Assertions.assertEquals("First Name Test1", personOne.firstName)
-        Assertions.assertEquals("Last Name Test1", personOne.lastName)
-        Assertions.assertEquals("Female", personOne.gender)
+        assertNotNull(personOne)
+        assertNotNull(personOne.key)
+        assertNotNull(personOne.links)
+        assertTrue(personOne.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
+        assertEquals("Addres Test1", personOne.address)
+        assertEquals("First Name Test1", personOne.firstName)
+        assertEquals("Last Name Test1", personOne.lastName)
+        assertEquals("Female", personOne.gender)
         val personFour = persons[4]
-        Assertions.assertNotNull(personFour)
-        Assertions.assertNotNull(personFour.key)
-        Assertions.assertNotNull(personFour.links)
-        Assertions.assertTrue(personFour.toString().contains("links: [</api/person/v1/4>;rel=\"self\"]"))
-        Assertions.assertEquals("Addres Test4", personFour.address)
-        Assertions.assertEquals("First Name Test4", personFour.firstName)
-        Assertions.assertEquals("Last Name Test4", personFour.lastName)
-        Assertions.assertEquals("Male", personFour.gender)
+        assertNotNull(personFour)
+        assertNotNull(personFour.key)
+        assertNotNull(personFour.links)
+        assertTrue(personFour.toString().contains("links: [</api/person/v1/4>;rel=\"self\"]"))
+        assertEquals("Addres Test4", personFour.address)
+        assertEquals("First Name Test4", personFour.firstName)
+        assertEquals("Last Name Test4", personFour.lastName)
+        assertEquals("Male", personFour.gender)
         val personSeven = persons[7]
-        Assertions.assertNotNull(personSeven)
-        Assertions.assertNotNull(personSeven.key)
-        Assertions.assertNotNull(personSeven.links)
-        Assertions.assertTrue(personSeven.toString().contains("links: [</api/person/v1/7>;rel=\"self\"]"))
-        Assertions.assertEquals("Addres Test7", personSeven.address)
-        Assertions.assertEquals("First Name Test7", personSeven.firstName)
-        Assertions.assertEquals("Last Name Test7", personSeven.lastName)
-        Assertions.assertEquals("Female", personSeven.gender)
+        assertNotNull(personSeven)
+        assertNotNull(personSeven.key)
+        assertNotNull(personSeven.links)
+        assertTrue(personSeven.toString().contains("links: [</api/person/v1/7>;rel=\"self\"]"))
+        assertEquals("Addres Test7", personSeven.address)
+        assertEquals("First Name Test7", personSeven.firstName)
+        assertEquals("Last Name Test7", personSeven.lastName)
+        assertEquals("Female", personSeven.gender)
     }
 
     @Test
@@ -78,14 +84,14 @@ class PersonServicesTest {
         person.id = 1L
         Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(person))
         val result = service!!.findById(1L)
-        Assertions.assertNotNull(result)
-        Assertions.assertNotNull(result!!.key)
-        Assertions.assertNotNull(result.links)
-        Assertions.assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        Assertions.assertEquals("Addres Test1", result.address)
-        Assertions.assertEquals("First Name Test1", result.firstName)
-        Assertions.assertEquals("Last Name Test1", result.lastName)
-        Assertions.assertEquals("Female", result.gender)
+        assertNotNull(result)
+        assertNotNull(result!!.key)
+        assertNotNull(result.links)
+        assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
+        assertEquals("Addres Test1", result.address)
+        assertEquals("First Name Test1", result.firstName)
+        assertEquals("Last Name Test1", result.lastName)
+        assertEquals("Female", result.gender)
     }
 
     @Test
@@ -101,24 +107,24 @@ class PersonServicesTest {
         Mockito.`when`(repository!!.save(entity)).thenReturn(persisted)
         val result = service!!.create(vo)
 
-        Assertions.assertNotNull(result)
-        Assertions.assertNotNull(result!!.key)
-        Assertions.assertNotNull(result.links)
-        Assertions.assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        Assertions.assertEquals("Addres Test1", result.address)
-        Assertions.assertEquals("First Name Test1", result.firstName)
-        Assertions.assertEquals("Last Name Test1", result.lastName)
-        Assertions.assertEquals("Female", result.gender)
+        assertNotNull(result)
+        assertNotNull(result!!.key)
+        assertNotNull(result.links)
+        assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
+        assertEquals("Addres Test1", result.address)
+        assertEquals("First Name Test1", result.firstName)
+        assertEquals("Last Name Test1", result.lastName)
+        assertEquals("Female", result.gender)
     }
 
     @Test
     fun testCreateWithNullPerson() {
-        val exception: Exception = Assertions.assertThrows(
+        val exception: Exception = assertThrows(
             RequiredObjectIsNullException::class.java
         ) { service!!.create(null) }
         val expectedMessage = "It is not allowed to persist a null object!"
         val actualMessage = exception.message
-        Assertions.assertTrue(actualMessage!!.contains(expectedMessage))
+        assertTrue(actualMessage!!.contains(expectedMessage))
     }
 
     @Test
@@ -134,24 +140,41 @@ class PersonServicesTest {
         Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(entity))
         Mockito.`when`(repository!!.save(entity)).thenReturn(persisted)
         val result = service!!.update(vo)
-        Assertions.assertNotNull(result)
-        Assertions.assertNotNull(result!!.key)
-        Assertions.assertNotNull(result.links)
-        Assertions.assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        Assertions.assertEquals("Addres Test1", result.address)
-        Assertions.assertEquals("First Name Test1", result.firstName)
-        Assertions.assertEquals("Last Name Test1", result.lastName)
-        Assertions.assertEquals("Female", result.gender)
+        assertNotNull(result)
+        assertNotNull(result!!.key)
+        assertNotNull(result.links)
+        assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
+        assertEquals("Addres Test1", result.address)
+        assertEquals("First Name Test1", result.firstName)
+        assertEquals("Last Name Test1", result.lastName)
+        assertEquals("Female", result.gender)
     }
 
     @Test
     fun testUpdateWithNullPerson() {
-        val exception: Exception = Assertions.assertThrows(
+        val exception: Exception = assertThrows(
             RequiredObjectIsNullException::class.java
         ) { service!!.update(null) }
         val expectedMessage = "It is not allowed to persist a null object!"
         val actualMessage = exception.message
-        Assertions.assertTrue(actualMessage!!.contains(expectedMessage))
+        assertTrue(actualMessage!!.contains(expectedMessage))
+    }
+
+    @Test
+    fun disablePerson() {
+        val person = input!!.mockEntity(1)
+        person.id = 1L
+        person.enabled = false
+        `when`(repository!!.findById(1L)).thenReturn(Optional.of(person))
+        val result = service!!.disablePerson(1L)
+        assertNotNull(result)
+        assertNotNull(result!!.key)
+        assertNotNull(result!!.links)
+        assertTrue(result.toString().contains("links: [</api/person/v1/1>;rel=\"self\"]"))
+        assertEquals("Addres Test1", result!!.address)
+        assertEquals("First Name Test1", result!!.firstName)
+        assertEquals("Last Name Test1", result!!.lastName)
+        assertEquals("Female", result!!.gender)
     }
 
     @Test
