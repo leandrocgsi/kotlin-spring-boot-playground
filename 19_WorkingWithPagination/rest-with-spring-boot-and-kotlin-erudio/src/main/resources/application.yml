@@ -1,0 +1,29 @@
+security:
+  jwt:
+    token:
+      secret-key: 53cr37
+      expire-length: 3600000
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/rest_with_spring_boot_kotlin_erudio?useTimezone=true&serverTimezone=UTC
+    username: root
+    password: admin123
+  flyway:
+      url: jdbc:mysql://localhost:3306/rest_with_spring_boot_kotlin_erudio?useTimezone=true&serverTimezone=UTC
+      user: root
+      password: admin123
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
+
+springdoc:
+  pathsToMatch:
+    - /auth/**
+    - /api/**/v1/**
+  swagger-ui:
+    use-root-path: true
