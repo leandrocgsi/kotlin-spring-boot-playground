@@ -8,14 +8,18 @@ import br.com.erudio.services.BookServices
 import br.com.erudio.unittests.mapper.mocks.MockBook
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.lenient
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.junit.jupiter.MockitoSettings
+import org.mockito.quality.Strictness
 import org.springframework.data.domain.*
 import java.util.*
 import java.util.stream.Collectors
@@ -23,7 +27,10 @@ import java.util.stream.Collectors
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class BookServicesTest {
+
+    // https://stackoverflow.com/questions/52139619/simulation-of-service-using-mockito-2-leads-to-stubbing-error
 
     private var input: MockBook? = null
 
@@ -101,6 +108,7 @@ class BookServicesTest {
     }
 
     @Test
+    @RepeatedTest(15)
     fun testCreate() {
         val entity = input!!.mockEntity(1)
 
@@ -110,7 +118,7 @@ class BookServicesTest {
         val vo = input!!.mockVO(1)
         vo.key = 1L
 
-        `when`(repository!!.save(entity)).thenReturn(persisted)
+        lenient().`when`(repository!!.save(entity)).thenReturn(persisted)
         val result = service!!.create(vo)
 
         assertNotNull(result)
