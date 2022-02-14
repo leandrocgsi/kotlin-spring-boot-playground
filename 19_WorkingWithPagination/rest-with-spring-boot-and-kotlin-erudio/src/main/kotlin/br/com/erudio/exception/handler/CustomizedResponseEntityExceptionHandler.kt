@@ -14,6 +14,7 @@ import java.util.*
 @ControllerAdvice
 @RestController
 class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
+
     @ExceptionHandler(Exception::class)
     fun handleAllExceptions(ex: Exception, request: WebRequest): ResponseEntity<ExceptionResponse> {
         val exceptionResponse = ExceptionResponse(

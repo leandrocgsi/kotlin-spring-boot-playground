@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.github.dozermapper.core.Mapping
 import org.springframework.hateoas.RepresentationModel
 
-@JsonPropertyOrder( "id", "firstName", "lastName", "Addresss", "gender" )
+@JsonPropertyOrder( "id", "firstName", "lastName", "Address", "gender" )
 class PersonVO : RepresentationModel<PersonVO>() {
 
     @Mapping("id")

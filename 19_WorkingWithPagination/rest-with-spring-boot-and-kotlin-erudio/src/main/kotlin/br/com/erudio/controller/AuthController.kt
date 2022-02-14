@@ -21,14 +21,14 @@ class AuthController {
     @PostMapping(value = ["/signin"])
     fun signin(@RequestBody data: AccountCredentialsVO?): ResponseEntity<*> {
         return if (checkIfParamsIsNotNull(data)) ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body("Ivalid client request") else authServices!!.signin(data!!)
+            .body("Invalid client request") else authServices.signin(data!!)
     }
 
     @Operation(summary = "Refresh token for authenticated user and returns a token")
     @PutMapping(value = ["/refresh/{username}"])
     fun refreshToken(@PathVariable("username") username: String?, @RequestHeader("Authorization") refreshToken: String?): ResponseEntity<*> {
         return if (checkIfParamsIsNotNull(username, refreshToken)) ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body("Ivalid client request") else authServices!!.refreshToken(username!!, refreshToken)
+            .body("Invalid client request") else authServices.refreshToken(username!!, refreshToken)
     }
 
     private fun checkIfParamsIsNotNull(username: String?, refreshToken: String?): Boolean {

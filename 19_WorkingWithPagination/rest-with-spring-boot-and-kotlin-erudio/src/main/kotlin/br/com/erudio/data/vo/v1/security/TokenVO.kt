@@ -10,7 +10,7 @@ class TokenVO {
     var accessToken: String? = null
     var refreshToken: String? = null
 
-    constructor() {}
+    constructor()
 
     constructor(
         username: String?, authenticated: Boolean?, created: Date?, expiration: Date?, accessToken: String?,

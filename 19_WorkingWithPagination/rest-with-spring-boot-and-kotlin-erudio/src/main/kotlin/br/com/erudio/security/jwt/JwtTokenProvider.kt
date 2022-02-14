@@ -59,8 +59,8 @@ class JwtTokenProvider {
         if (refreshToken.contains("Bearer ")) refreshToken = refreshToken.substring("Bearer ".length)
         val verifier: JWTVerifier = JWT.require(algorithm).build()
         val decodedJWT: DecodedJWT = verifier.verify(refreshToken)
-        val username: String = decodedJWT.getSubject()
-        val roles: List<String> = decodedJWT.getClaim("roles").asList<String>(String::class.java)
+        val username: String = decodedJWT.subject
+        val roles: List<String> = decodedJWT.getClaim("roles").asList(String::class.java)
         return createAccessToken(username, roles)
     }
 
@@ -73,7 +73,7 @@ class JwtTokenProvider {
             .withSubject(username)
             .withIssuer(issuerURL)
             .sign(algorithm)
-            .strip()
+            .trim()
     }
 
     private fun getRefreshToken(username: String, roles: List<String?>, now: Date): String {
@@ -83,13 +83,13 @@ class JwtTokenProvider {
             .withExpiresAt(validityRefreshToken)
             .withSubject(username)
             .sign(algorithm)
-            .strip()
+            .trim()
     }
 
     fun getAuthentication(token: String): Authentication {
         val decodedJWT: DecodedJWT = decodedToken(token)
-        val userDetails: UserDetails = userDetailsService.loadUserByUsername(decodedJWT.getSubject())
-        return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities())
+        val userDetails: UserDetails = userDetailsService.loadUserByUsername(decodedJWT.subject)
+        return UsernamePasswordAuthenticationToken(userDetails, "", userDetails.authorities)
     }
 
     fun resolveToken(req: HttpServletRequest): String? {

@@ -52,8 +52,8 @@ class BookServices {
     fun create(book: BookVO?): BookVO? {
         if (book == null) throw RequiredObjectIsNullException()
         val entity: Book = DozerConverter.parseObject(book, Book::class.java)
-        val bookVO: BookVO? = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
-        val withSelfRel = linkTo(BookController::class.java).slash(bookVO!!.key).withSelfRel()
+        val bookVO = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
+        val withSelfRel = linkTo(BookController::class.java).slash(bookVO.key).withSelfRel()
         bookVO.add(withSelfRel)
         return bookVO
     }
@@ -66,8 +66,8 @@ class BookServices {
         entity.title = book.title
         entity.price = book.price
         entity.launchDate = book.launchDate
-        val bookVO: BookVO? = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
-        val withSelfRel = linkTo(BookController::class.java).slash(bookVO!!.key).withSelfRel()
+        val bookVO: BookVO = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
+        val withSelfRel = linkTo(BookController::class.java).slash(bookVO.key).withSelfRel()
         bookVO.add(withSelfRel)
         return bookVO
     }
