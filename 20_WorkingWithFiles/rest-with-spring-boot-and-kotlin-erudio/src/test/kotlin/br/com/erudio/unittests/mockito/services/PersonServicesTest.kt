@@ -130,7 +130,7 @@ class PersonServicesTest {
     }
 
     @Test
-    @RepeatedTest(10)
+    //@RepeatedTest(10)
     fun testCreate() {
         val entity = input!!.mockEntity(1)
 
