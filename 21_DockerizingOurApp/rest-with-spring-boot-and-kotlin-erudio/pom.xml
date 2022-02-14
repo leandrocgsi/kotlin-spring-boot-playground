@@ -15,11 +15,12 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
+		<kotlin.version>1.6.10</kotlin.version>
 		<springdoc.version>2.0.0-M1</springdoc.version>
 		<dozer.version>6.4.1</dozer.version>
 		<testcontainers.version>1.16.3</testcontainers.version>
 		<rest-assured.version>4.5.0</rest-assured.version>
-		 <java-jwt.version>3.18.3</java-jwt.version>
+		<java-jwt.version>3.18.3</java-jwt.version>
 	</properties>
 	<dependencies>
 		<dependency>

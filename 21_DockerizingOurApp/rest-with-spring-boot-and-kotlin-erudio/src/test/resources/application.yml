@@ -1,5 +1,5 @@
 file:
-  upload-dir: /Code/SpringBootPlayground/UploadDir
+  upload-dir: /home/runner/work/kotlin-spring-boot-playground/kotlin-spring-boot-playground/UploadDir
 security:
   jwt:
     token:
