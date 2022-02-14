@@ -1,3 +1,5 @@
+file:
+  upload-dir: /Code/SpringBootPlayground/UploadDir
 security:
   jwt:
     token:
