@@ -8,32 +8,74 @@ import br.com.erudio.mapper.DozerConverter
 import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 
 @Service
 class PersonServices {
-
     // https://github.com/olszewskimichal/Hateoas-SpringBoot-Kotlin/blob/master/src/main/kotlin/com/example/hateoas/kotlin/DemoApplication.kt
     @Autowired
     private lateinit  var repository: PersonRepository
 
-    fun findAll(): List<PersonVO>? {
-        val persons = DozerConverter.parseListObjects(repository.findAll(), PersonVO::class.java)
-        for (value in persons!!) {
-            val withSelfRel = WebMvcLinkBuilder.linkTo(PersonController::class.java).slash(value!!.key).withSelfRel()
-            value!!.add(withSelfRel)
-        }
-        return persons
+    fun findAll(pageable: Pageable): CollectionModel<PersonVO?>? {
+        var page = repository.findAll(pageable);
+        val persons: Page<PersonVO> = DozerConverter.parsePageOfObjects(page, PersonVO::class.java)
+
+        persons
+            .stream()
+            .forEach { p ->
+                p!!.add(
+                    linkTo(methodOn(PersonController::class.java).findById(p!!.key)!!).withSelfRel()
+                )
+            }
+
+        val findAllLink = linkTo(
+            methodOn(PersonController::class.java)
+                .findAll(pageable.pageNumber, pageable.pageSize, "asc")!!
+        ).withSelfRel()
+
+        return CollectionModel.of<PersonVO>(persons, findAllLink)
+    }
+
+    fun findPersonByName(firstName: String?, pageable: Pageable): CollectionModel<PersonVO?>? {
+        val page: Page<Person?>? = repository.findPersonByName(firstName, pageable)
+
+        val persons: Page<PersonVO> = DozerConverter.parsePageOfObjects(page, PersonVO::class.java)
+
+        persons
+            .stream()
+            .forEach { p ->
+                p!!.add(
+                    linkTo(methodOn(PersonController::class.java).findById(p!!.key)!!).withSelfRel()
+                )
+            }
+
+        val findAllLink = linkTo(
+                methodOn(PersonController::class.java)
+                    .findPersonByName(firstName, pageable.pageNumber, pageable.pageSize, "asc")!!
+            ).withSelfRel()
+
+        return CollectionModel.of<PersonVO>(persons, findAllLink)
+    }
+
+    private fun parsePageOfObjects(page: Page<Person?>?): Page<PersonVO> {
+        val list: List<PersonVO> = DozerConverter.parseListObjects(page!!.content, PersonVO::class.java)
+        val personsPage: Page<PersonVO> = PageImpl(list)
+        return personsPage
     }
 
     fun findById(id: Long?): PersonVO? {
         val entity = repository.findById(id!!)
             .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
         val personVO: PersonVO? = DozerConverter.parseObject(entity, PersonVO::class.java)
-        val withSelfRel = WebMvcLinkBuilder.linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
         personVO!!.add(withSelfRel)
         return personVO
     }
@@ -42,7 +84,7 @@ class PersonServices {
         if (person == null) throw RequiredObjectIsNullException()
         val entity: Person = DozerConverter.parseObject(person, Person::class.java)
         var personVO: PersonVO? = DozerConverter.parseObject(repository.save(entity), PersonVO::class.java)
-        val withSelfRel = WebMvcLinkBuilder.linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
         personVO!!.add(withSelfRel)
         return personVO
     }
@@ -56,7 +98,7 @@ class PersonServices {
         entity.address = person.address!!
         entity.gender = person.gender!!
         var personVO: PersonVO? = DozerConverter.parseObject(repository.save(entity), PersonVO::class.java)
-        val withSelfRel = WebMvcLinkBuilder.linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
         personVO!!.add(withSelfRel)
         return personVO
     }
@@ -67,11 +109,10 @@ class PersonServices {
         val entity = repository.findById(id!!)
             .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
         val personVO: PersonVO? = DozerConverter.parseObject(entity, PersonVO::class.java)
-        val withSelfRel = WebMvcLinkBuilder.linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
         personVO!!.add(withSelfRel)
         return personVO
     }
-
     fun delete(id: Long?) {
         val entity = repository.findById(id!!)
             .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
