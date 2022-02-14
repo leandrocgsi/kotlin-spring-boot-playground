@@ -1,5 +1,6 @@
 package br.com.erudio.unittests.mockito.services
 
+import br.com.erudio.data.vo.v1.BookVO
 import br.com.erudio.exception.RequiredObjectIsNullException
 import br.com.erudio.model.Book
 import br.com.erudio.repository.BookRepository
@@ -12,10 +13,12 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.domain.*
 import java.util.*
+import java.util.stream.Collectors
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -39,15 +42,22 @@ class BookServicesTest {
     @Test
     fun testFindAll() {
         val list: List<Book> = input!!.mockEntityList()
-        Mockito.`when`(repository!!.findAll()).thenReturn(list)
-        val books = service!!.findAll()
+        val page: Page<Book> = PageImpl(list)
+
+        val pageable: Pageable = PageRequest.of(0, 12, Sort.by(Sort.Direction.ASC, "firstName"))
+
+        `when`(repository!!.findAll(pageable)).thenReturn(page)
+        val searchPage = service!!.findAll(pageable)!!.content
+
+        val books: List<BookVO> = searchPage.stream().collect(Collectors.toList<BookVO>()) as List<BookVO>
+
         assertNotNull(books)
-        assertEquals(14, books!!.size)
+        assertEquals(14, books.size)
         val bookOne = books[1]
         assertNotNull(bookOne)
         assertNotNull(bookOne.key)
         assertNotNull(bookOne.links)
-        assertTrue(bookOne.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"))
+        assertTrue(bookOne.toString().contains("""links: [</api/book/v1/1>;rel="self"]"""))
         assertEquals("Some Author1", bookOne.author)
         assertEquals("Some Title1", bookOne.title)
         assertEquals(25.0, bookOne.price)
@@ -57,7 +67,7 @@ class BookServicesTest {
         assertNotNull(bookFour)
         assertNotNull(bookFour.key)
         assertNotNull(bookFour.links)
-        assertTrue(bookFour.toString().contains("links: [</api/book/v1/4>;rel=\"self\"]"))
+        assertTrue(bookFour.toString().contains("""links: [</api/book/v1/4>;rel="self"]"""))
         assertEquals("Some Author4", bookFour.author)
         assertEquals("Some Title4", bookFour.title)
         assertEquals(25.0, bookFour.price)
@@ -67,7 +77,7 @@ class BookServicesTest {
         assertNotNull(bookSeven)
         assertNotNull(bookSeven.key)
         assertNotNull(bookSeven.links)
-        assertTrue(bookSeven.toString().contains("links: [</api/book/v1/7>;rel=\"self\"]"))
+        assertTrue(bookSeven.toString().contains("""links: [</api/book/v1/7>;rel="self"]"""))
         assertEquals("Some Author7", bookSeven.author)
         assertEquals("Some Title7", bookSeven.title)
         assertEquals(25.0, bookSeven.price)
@@ -78,12 +88,12 @@ class BookServicesTest {
     fun testFindById() {
         val book = input!!.mockEntity(1)
         book.id = 1L
-        Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(book))
+        `when`(repository!!.findById(1L)).thenReturn(Optional.of(book))
         val result = service!!.findById(1L)
         assertNotNull(result)
         assertNotNull(result!!.key)
         assertNotNull(result.links)
-        assertTrue(result.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"))
+        assertTrue(result.toString().contains("""links: [</api/book/v1/1>;rel="self"]"""))
         assertEquals("Some Author1", result.author)
         assertEquals("Some Title1", result.title)
         assertEquals(25.0, result.price)
@@ -100,13 +110,13 @@ class BookServicesTest {
         val vo = input!!.mockVO(1)
         vo.key = 1L
 
-        Mockito.`when`(repository!!.save(entity)).thenReturn(persisted)
+        `when`(repository!!.save(entity)).thenReturn(persisted)
         val result = service!!.create(vo)
 
         assertNotNull(result)
         assertNotNull(result!!.key)
         assertNotNull(result.links)
-        assertTrue(result.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"))
+        assertTrue(result.toString().contains("""links: [</api/book/v1/1>;rel="self"]"""))
         assertEquals("Some Author1", result.author)
         assertEquals("Some Title1", result.title)
         assertEquals(25.0, result.price)
@@ -133,13 +143,13 @@ class BookServicesTest {
 
         val vo = input!!.mockVO(1)
         vo.key = 1L
-        Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(entity))
-        Mockito.`when`(repository!!.save(entity)).thenReturn(persisted)
+        `when`(repository!!.findById(1L)).thenReturn(Optional.of(entity))
+        `when`(repository!!.save(entity)).thenReturn(persisted)
         val result = service!!.update(vo)
         assertNotNull(result)
         assertNotNull(result!!.key)
         assertNotNull(result.links)
-        assertTrue(result.toString().contains("links: [</api/book/v1/1>;rel=\"self\"]"))
+        assertTrue(result.toString().contains("""links: [</api/book/v1/1>;rel="self"]"""))
         assertEquals("Some Author1", result.author)
         assertEquals("Some Title1", result.title)
         assertEquals(25.0, result.price)
@@ -160,7 +170,7 @@ class BookServicesTest {
     fun testDelete() {
         val book = input!!.mockEntity(1)
         book.id = 1L
-        Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(book))
+        `when`(repository!!.findById(1L)).thenReturn(Optional.of(book))
         service!!.delete(1L)
     }
 }

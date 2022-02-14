@@ -68,7 +68,7 @@ class AuthControllerYamlTest : AbstractIntegrationTest() {
     @Test
     @Order(2)
     fun testRefresh() {
-        val newTokenVO: Any = given()
+        val newTokenVO = given()
             .basePath("/auth/refresh")
             .port(TestsConfig.SERVER_PORT)
             .contentType(TestsConfig.CONTENT_TYPE_YML)
@@ -80,9 +80,9 @@ class AuthControllerYamlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`<Any>(TokenVO::class.java, objectMapper)
+            .`as`(TokenVO::class.java, objectMapper)
 
-        assertNotNull(tokenVO!!.accessToken)
-        assertNotNull(tokenVO!!.refreshToken)
+        assertNotNull(newTokenVO!!.accessToken)
+        assertNotNull(newTokenVO.refreshToken)
     }
 }

@@ -21,8 +21,8 @@ object DozerConverter {
         return destinationObjects
     }
 
-    fun <O, D> parsePageOfObjects(page: Page<O?>?, destination: Class<D>?): Page<D> {
-        val list: List<D> = parseListObjects(page!!.content, destination)
+    fun <O, D> parsePageOfObjects (origin: Page<O>?, destination: Class<D>?): Page<D> {
+        val list: List<D> = parseListObjects(origin!!.content, destination)
         return PageImpl(list)
     }
 }

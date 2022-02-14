@@ -31,7 +31,7 @@ class MockPerson {
 
     fun mockEntity(number: Int): Person {
         val person = Person()
-        person.address = "Addres Test$number"
+        person.address = "Address Test$number"
         person.firstName = "First Name Test$number"
         person.gender = if (number % 2 == 0) "Male" else "Female"
         person.id = number.toLong()
@@ -42,7 +42,7 @@ class MockPerson {
 
     fun mockVO(number: Int): PersonVO {
         val person = PersonVO()
-        person.address = "Addres Test$number"
+        person.address = "Address Test$number"
         person.firstName = "First Name Test$number"
         person.gender = if (number % 2 == 0) "Male" else "Female"
         person.key = number.toLong()

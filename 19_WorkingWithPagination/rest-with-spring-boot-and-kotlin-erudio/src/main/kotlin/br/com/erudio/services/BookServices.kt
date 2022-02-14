@@ -8,7 +8,11 @@ import br.com.erudio.mapper.DozerConverter
 import br.com.erudio.model.Book
 import br.com.erudio.repository.BookRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.stereotype.Service
 
 
@@ -19,44 +23,52 @@ class BookServices {
     @Autowired
     private lateinit  var repository: BookRepository
 
-    fun findAll(): List<BookVO>? {
-        val books = DozerConverter.parseListObjects(repository.findAll(), BookVO::class.java)
-        for (value in books!!) {
-            val withSelfRel = WebMvcLinkBuilder.linkTo(BookController::class.java).slash(value!!.key).withSelfRel()
-            value!!.add(withSelfRel)
+    fun findAll(pageable: Pageable): CollectionModel<BookVO?>? {
+        val page = repository.findAll(pageable)
+        val books: Page<BookVO> = DozerConverter.parsePageOfObjects(page, BookVO::class.java)
+
+        for (book in books.content    ) {
+            val withSelfRel = linkTo(BookController::class.java).slash(book!!.key).withSelfRel()
+            book.add(withSelfRel)
         }
-        return books
+
+        val findAllLink = linkTo(
+            methodOn(BookController::class.java)
+                .findAll(pageable.pageNumber, pageable.pageSize, "asc")!!
+        ).withSelfRel()
+
+        return CollectionModel.of<BookVO>(books, findAllLink)
     }
 
     fun findById(id: Long?): BookVO? {
         val entity = repository.findById(id!!)
             .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
-        val bookVO: BookVO? = DozerConverter.parseObject(entity, BookVO::class.java)
-        val withSelfRel = WebMvcLinkBuilder.linkTo(BookController::class.java).slash(bookVO!!.key).withSelfRel()
-        bookVO!!.add(withSelfRel)
+        val bookVO: BookVO = DozerConverter.parseObject(entity, BookVO::class.java)
+        val withSelfRel = linkTo(BookController::class.java).slash(bookVO.key).withSelfRel()
+        bookVO.add(withSelfRel)
         return bookVO
     }
 
     fun create(book: BookVO?): BookVO? {
         if (book == null) throw RequiredObjectIsNullException()
         val entity: Book = DozerConverter.parseObject(book, Book::class.java)
-        var bookVO: BookVO? = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
-        val withSelfRel = WebMvcLinkBuilder.linkTo(BookController::class.java).slash(bookVO!!.key).withSelfRel()
-        bookVO!!.add(withSelfRel)
+        val bookVO: BookVO? = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
+        val withSelfRel = linkTo(BookController::class.java).slash(bookVO!!.key).withSelfRel()
+        bookVO.add(withSelfRel)
         return bookVO
     }
 
     fun update(book: BookVO?): BookVO? {
         if (book == null) throw RequiredObjectIsNullException()
-        val entity = repository.findById(book!!.key!!)
+        val entity = repository.findById(book.key!!)
             .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
-        entity.author = book.author!!
-        entity.title = book.title!!
-        entity.price = book.price!!
-        entity.launchDate = book.launchDate!!
-        var bookVO: BookVO? = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
-        val withSelfRel = WebMvcLinkBuilder.linkTo(BookController::class.java).slash(bookVO!!.key).withSelfRel()
-        bookVO!!.add(withSelfRel)
+        entity.author = book.author
+        entity.title = book.title
+        entity.price = book.price
+        entity.launchDate = book.launchDate
+        val bookVO: BookVO? = DozerConverter.parseObject(repository.save(entity), BookVO::class.java)
+        val withSelfRel = linkTo(BookController::class.java).slash(bookVO!!.key).withSelfRel()
+        bookVO.add(withSelfRel)
         return bookVO
     }
 

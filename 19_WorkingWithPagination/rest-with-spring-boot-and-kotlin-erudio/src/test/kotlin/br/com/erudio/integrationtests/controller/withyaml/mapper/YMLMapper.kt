@@ -1,15 +1,15 @@
 package br.com.erudio.integrationtests.controller.withyaml.mapper
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.type.TypeFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 
-import com.fasterxml.jackson.databind.ObjectMapper as JacksonObjectMapper;
-import io.restassured.mapper.ObjectMapper;
-import io.restassured.mapper.ObjectMapperDeserializationContext;
-import io.restassured.mapper.ObjectMapperSerializationContext;
+import com.fasterxml.jackson.databind.ObjectMapper as JacksonObjectMapper
+import io.restassured.mapper.ObjectMapper
+import io.restassured.mapper.ObjectMapperDeserializationContext
+import io.restassured.mapper.ObjectMapperSerializationContext
 
 class YMLMapper : ObjectMapper {
 
@@ -18,7 +18,6 @@ class YMLMapper : ObjectMapper {
 
     init {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        //typeFactory = TypeFactory.defaultInstance()
     }
 
     override fun deserialize(context: ObjectMapperDeserializationContext): Any? {

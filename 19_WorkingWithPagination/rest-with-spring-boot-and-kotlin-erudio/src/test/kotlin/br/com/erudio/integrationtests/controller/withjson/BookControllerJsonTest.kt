@@ -5,13 +5,13 @@ import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.TokenVO
+import br.com.erudio.integrationtests.vo.wrappers.WrapperBookVO
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
-import io.restassured.common.mapper.TypeRef
 import io.restassured.filter.log.LogDetail
 import io.restassured.filter.log.RequestLoggingFilter
 import io.restassured.filter.log.ResponseLoggingFilter
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
-import java.util.List
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation::class)
@@ -91,7 +90,7 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
         assertNotNull(book!!.title)
         assertNotNull(book!!.author)
         assertNotNull(book!!.price)
-        assertTrue(book!!.id!!!! > 0)
+        assertTrue(book!!.id!! > 0)
         assertEquals("Docker Deep Dive", book!!.title)
         assertEquals("Nigel Poulton", book!!.author)
         assertEquals(55.99, book!!.price)
@@ -116,14 +115,14 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
 
         val bookUpdated: BookVO = objectMapper!!.readValue(content, BookVO::class.java)
 
-        assertNotNull(bookUpdated!!.id)
-        assertNotNull(bookUpdated!!.title)
-        assertNotNull(bookUpdated!!.author)
-        assertNotNull(bookUpdated!!.price)
-        assertEquals(bookUpdated!!.id, book!!.id)
-        assertEquals("Docker Deep Dive - Updated", bookUpdated!!.title)
-        assertEquals("Nigel Poulton", bookUpdated!!.author)
-        assertEquals(55.99, bookUpdated!!.price)
+        assertNotNull(bookUpdated.id)
+        assertNotNull(bookUpdated.title)
+        assertNotNull(bookUpdated.author)
+        assertNotNull(bookUpdated.price)
+        assertEquals(bookUpdated.id, book!!.id)
+        assertEquals("Docker Deep Dive - Updated", bookUpdated.title)
+        assertEquals("Nigel Poulton", bookUpdated.author)
+        assertEquals(55.99, bookUpdated.price)
     }
 
     @Test
@@ -141,14 +140,14 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
             .body()
             .asString()
         val foundBook: BookVO = objectMapper!!.readValue(content, BookVO::class.java)
-        assertNotNull(foundBook!!.id)
-        assertNotNull(foundBook!!.title)
-        assertNotNull(foundBook!!.author)
-        assertNotNull(foundBook!!.price)
-        assertEquals(foundBook!!.id, book!!.id)
-        assertEquals("Docker Deep Dive - Updated", foundBook!!.title)
-        assertEquals("Nigel Poulton", foundBook!!.author)
-        assertEquals(55.99, foundBook!!.price)
+        assertNotNull(foundBook.id)
+        assertNotNull(foundBook.title)
+        assertNotNull(foundBook.author)
+        assertNotNull(foundBook.price)
+        assertEquals(foundBook.id, book!!.id)
+        assertEquals("Docker Deep Dive - Updated", foundBook.title)
+        assertEquals("Nigel Poulton", foundBook.author)
+        assertEquals(55.99, foundBook.price)
     }
 
     @Test
@@ -169,41 +168,45 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
     fun testFindAll() {
         val content = given().spec(specification)
             .contentType(TestsConfig.CONTENT_TYPE_JSON)
+            .queryParams("page", 0 , "limit", 5, "direction", "asc")
             .`when`()
             .get()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(object : TypeRef<List<BookVO?>?>() {})
+            .asString()
 
-        val foundBookOne: BookVO? = content?.get(0)
+        val wrapper = objectMapper!!.readValue(content, WrapperBookVO::class.java)
+        val books = wrapper.embedded!!.books
+
+        val foundBookOne: BookVO? = books?.get(0)
 
         assertNotNull(foundBookOne!!.id)
-        assertNotNull(foundBookOne!!.title)
-        assertNotNull(foundBookOne!!.author)
-        assertNotNull(foundBookOne!!.price)
-        assertTrue(foundBookOne!!.id!!!! > 0)
-        assertEquals("Working effectively with legacy code", foundBookOne!!.title)
-        assertEquals("Michael C. Feathers", foundBookOne!!.author)
-        assertEquals(49.00, foundBookOne!!.price)
+        assertNotNull(foundBookOne.title)
+        assertNotNull(foundBookOne.author)
+        assertNotNull(foundBookOne.price)
+        assertTrue(foundBookOne.id!! > 0)
+        assertEquals("Big Data: como extrair volume, variedade, velocidade e valor da avalanche de informação cotidiana", foundBookOne.title)
+        assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", foundBookOne.author)
+        assertEquals(54.00, foundBookOne.price)
 
-        val foundBookFive: BookVO? = content?.get(4)
+        val foundBookFive: BookVO = books[4]
 
-        assertNotNull(foundBookFive!!.id)
-        assertNotNull(foundBookFive!!.title)
-        assertNotNull(foundBookFive!!.author)
-        assertNotNull(foundBookFive!!.price)
-        assertTrue(foundBookFive!!.id!!!! > 0)
-        assertEquals("Code complete", foundBookFive!!.title)
-        assertEquals("Steve McConnell", foundBookFive!!.author)
-        assertEquals(58.0, foundBookFive!!.price)
+        assertNotNull(foundBookFive.id)
+        assertNotNull(foundBookFive.title)
+        assertNotNull(foundBookFive.author)
+        assertNotNull(foundBookFive.price)
+        assertTrue(foundBookFive.id!! > 0)
+        assertEquals("Domain Driven Design", foundBookFive.title)
+        assertEquals("Eric Evans", foundBookFive.author)
+        assertEquals(92.0, foundBookFive.price)
     }
 
     private fun mockBook() {
         book!!.title = "Docker Deep Dive"
         book!!.author = "Nigel Poulton"
-        book!!.price = 55.99.toDouble()
+        book!!.price = 55.99
         book!!.launchDate = Date()
     }
 }

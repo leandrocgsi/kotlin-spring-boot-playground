@@ -44,7 +44,7 @@ internal class AuthControllerJsonTest : AbstractIntegrationTest() {
     @Test
     @Order(2)
     fun testRefresh() {
-        val newTokenVO: Any = given()
+        val newTokenVO = given()
             .basePath("/auth/refresh")
             .port(TestsConfig.SERVER_PORT)
             .contentType(TestsConfig.CONTENT_TYPE_JSON)
@@ -58,8 +58,8 @@ internal class AuthControllerJsonTest : AbstractIntegrationTest() {
             .body()
             .`as`(TokenVO::class.java)
 
-        assertNotNull(tokenVO!!.accessToken)
-        assertNotNull(tokenVO!!.refreshToken)
+        assertNotNull(newTokenVO!!.accessToken)
+        assertNotNull(newTokenVO.refreshToken)
     }
 
     companion object {

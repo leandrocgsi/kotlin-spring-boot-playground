@@ -1,27 +1,25 @@
 package br.com.erudio.unittests.mockito.services
 
+import br.com.erudio.data.vo.v1.PersonVO
 import br.com.erudio.exception.RequiredObjectIsNullException
 import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import br.com.erudio.services.PersonServices
 import br.com.erudio.unittests.mapper.mocks.MockPerson
-
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.mockito.Mockito.`when`
-
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.domain.*
 import java.util.*
+import java.util.stream.Collectors
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -45,16 +43,23 @@ class PersonServicesTest {
     @Test
     fun testFindAll() {
         val list: List<Person> = input!!.mockEntityList()
-        Mockito.`when`(repository!!.findAll()).thenReturn(list)
-        val persons = service!!.findAll()
+        val page: Page<Person> = PageImpl(list)
+
+        val pageable: Pageable = PageRequest.of(0, 12, Sort.by(Sort.Direction.ASC, "firstName"))
+
+        `when`(repository!!.findAll(pageable)).thenReturn(page)
+        val searchPage = service!!.findAll(pageable)!!.content
+
+        val persons: List<PersonVO> = searchPage.stream().collect(Collectors.toList<PersonVO>()) as List<PersonVO>
+
         assertNotNull(persons)
-        assertEquals(14, persons!!.size)
+        assertEquals(14, persons.size)
         val personOne = persons[1]
         assertNotNull(personOne)
         assertNotNull(personOne.key)
         assertNotNull(personOne.links)
         assertTrue(personOne.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        assertEquals("Addres Test1", personOne.address)
+        assertEquals("Address Test1", personOne.address)
         assertEquals("First Name Test1", personOne.firstName)
         assertEquals("Last Name Test1", personOne.lastName)
         assertEquals("Female", personOne.gender)
@@ -62,8 +67,8 @@ class PersonServicesTest {
         assertNotNull(personFour)
         assertNotNull(personFour.key)
         assertNotNull(personFour.links)
-        assertTrue(personFour.toString().contains("links: [</api/person/v1/4>;rel=\"self\"]"))
-        assertEquals("Addres Test4", personFour.address)
+        assertTrue(personFour.toString().contains("""links: [</api/person/v1/4>;rel="self"]"""))
+        assertEquals("Address Test4", personFour.address)
         assertEquals("First Name Test4", personFour.firstName)
         assertEquals("Last Name Test4", personFour.lastName)
         assertEquals("Male", personFour.gender)
@@ -71,30 +76,61 @@ class PersonServicesTest {
         assertNotNull(personSeven)
         assertNotNull(personSeven.key)
         assertNotNull(personSeven.links)
-        assertTrue(personSeven.toString().contains("links: [</api/person/v1/7>;rel=\"self\"]"))
-        assertEquals("Addres Test7", personSeven.address)
+        assertTrue(personSeven.toString().contains("""links: [</api/person/v1/7>;rel="self"]"""))
+        assertEquals("Address Test7", personSeven.address)
         assertEquals("First Name Test7", personSeven.firstName)
         assertEquals("Last Name Test7", personSeven.lastName)
         assertEquals("Female", personSeven.gender)
     }
 
     @Test
+    fun testFindPersonByName() {
+        val person: Person = input!!.mockEntity()
+        person.id = 1L
+        val list: ArrayList<Person?> = ArrayList()
+        list.add(person)
+
+        val page: Page<Person?> = PageImpl(list)
+
+        val pageable: Pageable = PageRequest.of(0, 12, Sort.by(Sort.Direction.ASC, "firstName"))
+
+        `when`(repository!!.findPersonByName("Person name", pageable)).thenReturn(page)
+
+
+        val searchPage = service!!.findPersonByName("Person name", pageable)!!.content
+
+        val persons: List<PersonVO> = searchPage.stream().collect(Collectors.toList<PersonVO>()) as List<PersonVO>
+
+
+        val result = persons[0]
+
+        assertNotNull(result)
+        assertNotNull(result.key)
+        assertEquals("Address Test0", result.address)
+        assertEquals("First Name Test0", result.firstName)
+        assertEquals("Last Name Test0", result.lastName)
+        assertEquals("Male", result.gender)
+        assertTrue(result.enabled)
+    }
+
+    @Test
     fun testFindById() {
         val person = input!!.mockEntity(1)
         person.id = 1L
-        Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(person))
+        `when`(repository!!.findById(1L)).thenReturn(Optional.of(person))
         val result = service!!.findById(1L)
         assertNotNull(result)
         assertNotNull(result!!.key)
         assertNotNull(result.links)
         assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        assertEquals("Addres Test1", result.address)
+        assertEquals("Address Test1", result.address)
         assertEquals("First Name Test1", result.firstName)
         assertEquals("Last Name Test1", result.lastName)
         assertEquals("Female", result.gender)
     }
 
     @Test
+    @RepeatedTest(10)
     fun testCreate() {
         val entity = input!!.mockEntity(1)
 
@@ -104,14 +140,14 @@ class PersonServicesTest {
         val vo = input!!.mockVO(1)
         vo.key = 1L
 
-        Mockito.`when`(repository!!.save(entity)).thenReturn(persisted)
+        `when`(repository!!.save(entity)).thenReturn(persisted)
         val result = service!!.create(vo)
 
         assertNotNull(result)
         assertNotNull(result!!.key)
         assertNotNull(result.links)
         assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        assertEquals("Addres Test1", result.address)
+        assertEquals("Address Test1", result.address)
         assertEquals("First Name Test1", result.firstName)
         assertEquals("Last Name Test1", result.lastName)
         assertEquals("Female", result.gender)
@@ -137,14 +173,14 @@ class PersonServicesTest {
 
         val vo = input!!.mockVO(1)
         vo.key = 1L
-        Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(entity))
-        Mockito.`when`(repository!!.save(entity)).thenReturn(persisted)
+        `when`(repository!!.findById(1L)).thenReturn(Optional.of(entity))
+        `when`(repository!!.save(entity)).thenReturn(persisted)
         val result = service!!.update(vo)
         assertNotNull(result)
         assertNotNull(result!!.key)
         assertNotNull(result.links)
         assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
-        assertEquals("Addres Test1", result.address)
+        assertEquals("Address Test1", result.address)
         assertEquals("First Name Test1", result.firstName)
         assertEquals("Last Name Test1", result.lastName)
         assertEquals("Female", result.gender)
@@ -169,19 +205,19 @@ class PersonServicesTest {
         val result = service!!.disablePerson(1L)
         assertNotNull(result)
         assertNotNull(result!!.key)
-        assertNotNull(result!!.links)
-        assertTrue(result.toString().contains("links: [</api/person/v1/1>;rel=\"self\"]"))
-        assertEquals("Addres Test1", result!!.address)
-        assertEquals("First Name Test1", result!!.firstName)
-        assertEquals("Last Name Test1", result!!.lastName)
-        assertEquals("Female", result!!.gender)
+        assertNotNull(result.links)
+        assertTrue(result.toString().contains("""links: [</api/person/v1/1>;rel="self"]"""))
+        assertEquals("Address Test1", result.address)
+        assertEquals("First Name Test1", result.firstName)
+        assertEquals("Last Name Test1", result.lastName)
+        assertEquals("Female", result.gender)
     }
 
     @Test
     fun testDelete() {
         val person = input!!.mockEntity(1)
         person.id = 1L
-        Mockito.`when`(repository!!.findById(1L)).thenReturn(Optional.of(person))
+        `when`(repository!!.findById(1L)).thenReturn(Optional.of(person))
         service!!.delete(1L)
     }
 }

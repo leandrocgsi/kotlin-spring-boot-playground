@@ -25,7 +25,7 @@ class WebConfig : WebMvcConfigurer {
             .ignoreAcceptHeader(false)
             .defaultContentType(MediaType.APPLICATION_JSON)
                 .mediaType("json", MediaType.APPLICATION_JSON)
-                .mediaType("xml", MediaType.APPLICATION_XML);
+                .mediaType("xml", MediaType.APPLICATION_XML)
         */
 
 
@@ -37,7 +37,7 @@ class WebConfig : WebMvcConfigurer {
             .defaultContentType(MediaType.APPLICATION_JSON)
                 .mediaType("json", MediaType.APPLICATION_JSON)
                 .mediaType("x-yaml", MEDIA_TYPE_APPLICATION_YML)
-                .mediaType("xml", MediaType.APPLICATION_XML);
+                .mediaType("xml", MediaType.APPLICATION_XML)
         */
 
         configurer.favorParameter(false)
@@ -46,6 +46,6 @@ class WebConfig : WebMvcConfigurer {
             .defaultContentType(MediaType.APPLICATION_JSON)
                 .mediaType("json", MediaType.APPLICATION_JSON)
                 .mediaType("xml", MediaType.APPLICATION_XML)
-                .mediaType("x-yaml", MEDIA_TYPE_APPLICATION_YML);
+                .mediaType("x-yaml", MEDIA_TYPE_APPLICATION_YML)
     }
 }

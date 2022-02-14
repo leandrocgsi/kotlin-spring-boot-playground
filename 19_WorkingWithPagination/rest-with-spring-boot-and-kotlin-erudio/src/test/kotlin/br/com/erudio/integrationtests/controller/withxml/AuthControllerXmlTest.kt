@@ -1,21 +1,17 @@
 package br.com.erudio.integrationtests.controller.withxml
 
-import io.restassured.RestAssured.given
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
-
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestMethodOrder
-import org.springframework.boot.test.context.SpringBootTest
-
 import br.com.erudio.configs.TestsConfig
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.TokenVO
+import io.restassured.RestAssured.given
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
+import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestMethodOrder
+import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation::class)
@@ -65,7 +61,7 @@ class AuthControllerXmlTest : AbstractIntegrationTest() {
             .body()
             .`as`(TokenVO::class.java)
 
-        assertNotNull(tokenVO!!.accessToken)
-        assertNotNull(tokenVO!!.refreshToken)
+        assertNotNull(newTokenVO!!.accessToken)
+        assertNotNull(newTokenVO.refreshToken)
     }
 }
