@@ -29,6 +29,14 @@ export default function Books(){
         })
     }, [accessToken]);
     
+    async function editBook(id) {
+        try {
+            history.push(`book/new/${id}`)
+        } catch (err) {
+            alert('Edit book failed! Try again!');
+        }
+    }
+
     async function deleteBook(id) {
         try {
             await api.delete(`api/book/v1/${id}`, authorization);
@@ -74,7 +82,7 @@ export default function Books(){
                         <strong>Release Date:</strong>
                         <p>{Intl.DateTimeFormat('pt-BR').format(new Date(book.launchDate))}</p>
                         
-                        <button type="button">
+                        <button onClick={() => editBook(book.id)} type="button">
                             <FiEdit size={20} color="#251FC5"/>
                         </button>
                         
