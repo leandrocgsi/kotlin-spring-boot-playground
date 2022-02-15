@@ -11,6 +11,7 @@ import logoImage from '../../assets/logo.svg'
 export default function Books(){
     
     const [books, setBooks] = useState([]);
+    const [page, setPage] = useState(1);
 
     const username = localStorage.getItem('username');
     const accessToken = localStorage.getItem('accessToken');
@@ -24,10 +25,14 @@ export default function Books(){
     }
 
     useEffect(() => {
-        api.get('api/book/v1?page=0&limit=4&direction=asc', authorization).then(response =>{
-            setBooks(response.data._embedded.bookVOes)
-        })
+        fetchMoreBooks();
     }, [accessToken]);
+
+    async function fetchMoreBooks() {
+        const response = await api.get(`api/book/v1?page=${page}&limit=4&direction=asc`, authorization);
+        setBooks([ ...books, ...response.data._embedded.bookVOes]);
+        setPage(page + 1);
+    }
     
     async function editBook(id) {
         try {
@@ -93,6 +98,7 @@ export default function Books(){
                 ))}
 
             </ul>
+            <button className="button" onClick={fetchMoreBooks} type="button">Load More</button>
         </div>
     );
 }
