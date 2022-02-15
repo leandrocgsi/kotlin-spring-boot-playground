@@ -28,14 +28,15 @@ export default function NewBook(){
         };
 
         const accessToken = localStorage.getItem('accessToken');
-        const headers = {
+        
+        const authorization = {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         }
 
         try {
-            await api.post('api/book/v1', data, headers);
+            await api.post('api/book/v1', data, authorization);
             history.push('/books');
         } catch (err) {
             alert('Error while recording Book! Try Again.')
