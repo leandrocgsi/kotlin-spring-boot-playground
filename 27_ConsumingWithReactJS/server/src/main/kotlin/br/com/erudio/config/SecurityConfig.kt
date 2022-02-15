@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder
 
 import br.com.erudio.security.jwt.JwtConfigurer
 import br.com.erudio.security.jwt.JwtTokenProvider
-
+import org.springframework.web.cors.CorsUtils
 
 
 @Configuration
@@ -40,7 +40,7 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Throws(Exception::class)
-    protected override fun configure(http: HttpSecurity) {
+    override fun configure(http: HttpSecurity) {
         http
             .httpBasic().disable()
             .csrf().disable()
@@ -50,6 +50,8 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
                 .antMatchers("/auth/signin", "/auth/refresh", "/api-docs/**", "/swagger-ui.html**").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/users").denyAll()
+            .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .anyRequest().authenticated()
             .and()
                 .cors()
             .and()
