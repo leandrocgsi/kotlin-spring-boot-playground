@@ -26,6 +26,8 @@ import java.util.stream.Collectors
 @ExtendWith(MockitoExtension::class)
 class PersonServicesTest {
 
+    // https://stackoverflow.com/questions/52139619/simulation-of-service-using-mockito-2-leads-to-stubbing-error
+
     private var input: MockPerson? = null
 
     @InjectMocks
@@ -130,7 +132,7 @@ class PersonServicesTest {
     }
 
     @Test
-    //@RepeatedTest(10)
+    @RepeatedTest(15)
     fun testCreate() {
         val entity = input!!.mockEntity(1)
 
