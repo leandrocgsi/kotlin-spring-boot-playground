@@ -21,10 +21,6 @@ import org.springframework.web.bind.annotation.*
 // https://lankydan.dev/documenting-a-spring-rest-api-following-the-openapi-specification
 // https://github.com/lankydan/spring-rest-api-with-swagger
 
-// https://reflectoring.io/constructor-injection/
-// https://spring.io/blog/2007/07/11/setter-injection-versus-constructor-injection-and-the-use-of-required/
-// https://stackoverflow.com/questions/2420193/how-to-avoid-dependency-injection-constructor-madness
-
 @RestController
 @RequestMapping("/api/person/v1")
 @Tag(name = "People", description = "Endpoints for Managing People")
