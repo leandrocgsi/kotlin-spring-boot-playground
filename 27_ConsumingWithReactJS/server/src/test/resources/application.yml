@@ -1,5 +1,5 @@
 cors:
-  originPatterns: http://localhost:3000,http://localhost:8080
+  originPatterns: http://localhost:3000,http://localhost:8080,https://erudio.com.br
 file:
   upload-dir: /Code/SpringBootPlayground/UploadDir
 security:

@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebServerConfiguration {
 
+    // https://medium.com/@tcbasche/cors-in-spring-boot-with-kotlin-55eb5385f0e
     @Value("\${cors.originPatterns:default}")
     private val corsOriginPatterns: String = ""
 

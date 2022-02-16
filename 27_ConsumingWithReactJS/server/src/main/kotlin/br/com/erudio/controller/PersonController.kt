@@ -92,7 +92,7 @@ class PersonController {
         return ResponseEntity.ok(service.findPersonByName(firstName, pageable))
     }
 
-    //@CrossOrigin(origins = ["http://localhost:8080"])
+    @CrossOrigin(origins = ["http://localhost:8080"])
     @GetMapping("/{id}",
         produces = ["application/json", "application/xml", "application/x-yaml"])
     @Operation(summary = "Finds a person", description = "Find a specific person by your ID.",
@@ -118,7 +118,7 @@ class PersonController {
         return service.findById(id!!)
     }
 
-    //@CrossOrigin(origins = ["http://localhost:8080", "https://erudio.com.br"])
+    @CrossOrigin(origins = ["http://localhost:8080", "https://erudio.com.br"])
     @PostMapping(
         produces = ["application/json", "application/xml", "application/x-yaml"],
         consumes = ["application/json", "application/xml", "application/x-yaml"]
