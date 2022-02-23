@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import './styles.css';
 
@@ -13,7 +13,7 @@ export default function Login() {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
 
-    const history = useHistory();
+    const navigate  = useNavigate ();
 
     async function login(e) {
         e.preventDefault();
@@ -30,7 +30,7 @@ export default function Login() {
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
 
-            history.push('/books')
+            navigate('/books')
         } catch (err) {
             alert('Login failed! Try again!');
         }
