@@ -9,32 +9,25 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/person")
 class PersonController {
+
     @Autowired
     private lateinit  var service: PersonServices
 
     @GetMapping
-    fun findAll(): List<Person> {
-        return service.findAll()
-    }
+    fun findAll(): List<Person> = service.findAll()
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable("id") id: Long): Person {
-        return service.findById(id)
-    }
+    fun findById(@PathVariable("id") id: Long): Person = service.findById(id)
 
     @PostMapping
-    fun create(@RequestBody person: Person?): Person {
-        return service.create(person!!)
-    }
+    fun create(@RequestBody person: Person?): Person = service.create(person!!)
 
     @PutMapping
-    fun update(@RequestBody person: Person?): Person {
-        return service.update(person!!)
-    }
+    fun update(@RequestBody person: Person?): Person = service.update(person!!)
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: Long): ResponseEntity<*> {
         service.delete(id)
-        return ResponseEntity.ok().build<Any>()
+        return ResponseEntity.noContent().build<Any>()
     }
 }

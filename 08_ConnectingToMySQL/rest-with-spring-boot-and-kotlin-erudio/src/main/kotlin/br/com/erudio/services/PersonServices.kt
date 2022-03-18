@@ -13,18 +13,13 @@ class PersonServices {
     @Autowired
     private lateinit  var repository: PersonRepository
 
-    fun create(person: Person): Person {
-        return repository.save(person)
-    }
+    fun create(person: Person): Person = repository.save(person)
 
-    fun findAll(): List<Person> {
-        return repository.findAll()
-    }
+    fun findAll(): List<Person> = repository.findAll()
 
-    fun findById(id: Long): Person {
-        return repository.findById(id)
+    fun findById(id: Long): Person =
+        repository.findById(id)
             .orElseThrow { ResourceNotFoundException("No records found for this ID") }!!
-    }
 
     fun update(person: Person): Person {
         val entity: Person = repository.findById(person.id)
