@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/api/person/v1")
 class PersonController {
 
     @Autowired
@@ -22,7 +22,6 @@ class PersonController {
 
     @GetMapping(value = ["/{id}"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findById(@PathVariable("id") id: Long): PersonVO {
-
         return service.findById(id)
     }
 
