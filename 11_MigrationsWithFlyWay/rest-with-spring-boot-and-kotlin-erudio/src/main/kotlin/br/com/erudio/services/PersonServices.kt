@@ -26,7 +26,7 @@ class PersonServices {
 
         logger.info("Finding one person with ID $id!")
 
-        val entity = repository.findById(id!!)
+        val entity = repository.findById(id)
             .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
         return DozerMapper.parseObject(entity, PersonVO::class.java)
     }
