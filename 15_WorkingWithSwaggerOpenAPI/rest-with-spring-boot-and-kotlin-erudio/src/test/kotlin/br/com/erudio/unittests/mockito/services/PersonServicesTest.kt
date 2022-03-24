@@ -4,7 +4,7 @@ import br.com.erudio.exception.RequiredObjectIsNullException
 import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import br.com.erudio.services.PersonServices
-import br.com.erudio.unittests.mapper.mocks.MockPerson
+import br.com.erudio.unittests.mocks.MockPerson
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertEquals

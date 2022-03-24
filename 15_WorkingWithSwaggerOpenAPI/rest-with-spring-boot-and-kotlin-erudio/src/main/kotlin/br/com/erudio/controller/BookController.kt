@@ -1,7 +1,7 @@
 package br.com.erudio.controller
 
-import br.com.erudio.data.vo.v1.PersonVO
-import br.com.erudio.services.PersonServices
+import br.com.erudio.data.vo.v1.BookVO
+import br.com.erudio.services.BookServices
 import br.com.erudio.util.MediaType
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -14,23 +14,23 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/person/v1")
-@Tag(name = "People", description = "Endpoints for Managing People")
-class PersonController {
+@RequestMapping("/api/book/v1")
+@Tag(name = "Books", description = "Endpoints for Managing Books")
+class BookController {
 
     @Autowired
-    private lateinit  var service: PersonServices
+    private lateinit  var service: BookServices
 
     @GetMapping(
         produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
-    @Operation(summary = "Finds all People", description = "Finds all People.",
-        tags = ["People"] ,
+    @Operation(summary = "Finds all Books", description = "Finds all Books.",
+        tags = ["Books"] ,
         responses = [
             ApiResponse(
                 description = "Success",
                 responseCode = "200",
                 content = [
-                    Content(array = ArraySchema(schema = Schema(implementation = PersonVO::class)))
+                    Content(array = ArraySchema(schema = Schema(implementation = BookVO::class)))
                 ]
             ),
             ApiResponse(description = "No Content", responseCode = "204", content = [Content(schema = Schema(implementation = Unit::class))]),
@@ -40,21 +40,21 @@ class PersonController {
             ApiResponse(description = "Internal error", responseCode = "500", content = [Content(schema = Schema(implementation = Unit::class))])
         ]
     )
-    fun findAll(): List<PersonVO> {
+    fun findAll(): List<BookVO> {
         return service.findAll()
     }
 
     @GetMapping(value = ["/{id}"],
         produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
-    @Operation(summary = "Finds a person", description = "Find a specific person by your ID.",
-        tags = ["People"] ,
+    @Operation(summary = "Finds a book", description = "Find a specific book by your ID.",
+        tags = ["Books"] ,
         responses = [
             ApiResponse(
                 description = "Success",
                 responseCode = "200",
                 content = [
                     Content(
-                        schema = Schema(implementation = PersonVO::class)
+                        schema = Schema(implementation = BookVO::class)
                     )
                 ]
             ),
@@ -65,7 +65,7 @@ class PersonController {
             ApiResponse(description = "Internal error", responseCode = "500", content = [Content(schema = Schema(implementation = Unit::class))])
         ]
     )
-    fun findById(@PathVariable("id") id: Long): PersonVO {
+    fun findById(@PathVariable("id") id: Long): BookVO {
         return service.findById(id)
     }
 
@@ -74,16 +74,16 @@ class PersonController {
         produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML]
     )
     @Operation(
-        summary = "Adds a new person",
-        description = "Adds a new person by passing in a JSON, XML or YML representation of the person.",
-        tags = ["People"] ,
+        summary = "Adds a new book",
+        description = "Adds a new book by passing in a JSON, XML or YML representation of the book.",
+        tags = ["Books"] ,
         responses = [
             ApiResponse(
                 description = "Success",
                 responseCode = "200",
                 content = [
                     Content(
-                        schema = Schema(implementation = PersonVO::class)
+                        schema = Schema(implementation = BookVO::class)
                     )
                 ]
             ),
@@ -92,8 +92,8 @@ class PersonController {
             ApiResponse(description = "Internal error", responseCode = "500", content = [Content(schema = Schema(implementation = Unit::class))])
         ]
     )
-    fun create(@RequestBody person: PersonVO): PersonVO {
-        return service.create(person)
+    fun create(@RequestBody book: BookVO): BookVO {
+        return service.create(book)
     }
 
     @PutMapping(
@@ -101,16 +101,16 @@ class PersonController {
         produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML]
     )
     @Operation(
-        summary = "Updates a person's information",
-        description = "Updates a person's information by passing in a JSON, XML or YML representation of the updated person.",
-        tags = ["People"] ,
+        summary = "Updates a book's information",
+        description = "Updates a book's information by passing in a JSON, XML or YML representation of the updated book.",
+        tags = ["Books"] ,
         responses = [
             ApiResponse(
                 description = "Updated",
                 responseCode = "200",
                 content = [
                     Content(
-                        schema = Schema(implementation = PersonVO::class)
+                        schema = Schema(implementation = BookVO::class)
                     )
                 ]
             ),
@@ -121,15 +121,15 @@ class PersonController {
             ApiResponse(description = "Internal error", responseCode = "500", content = [Content(schema = Schema(implementation = Unit::class))])
         ]
     )
-    fun update(@RequestBody person: PersonVO): PersonVO {
-        return service.update(person)
+    fun update(@RequestBody book: BookVO): BookVO {
+        return service.update(book)
     }
 
     @DeleteMapping(value = ["/{id}"])
     @Operation(
-        summary = "Deletes a person",
-        description = "Deletes a person by their Id.",
-        tags = ["People"] ,
+        summary = "Deletes a book",
+        description = "Deletes a book by their Id.",
+        tags = ["Books"] ,
         responses = [
             ApiResponse(description = "No Content", responseCode = "204", content = [Content(schema = Schema(implementation = Unit::class))]),
             ApiResponse(description = "Bad Request", responseCode = "400", content = [Content(schema = Schema(implementation = Unit::class))]),
