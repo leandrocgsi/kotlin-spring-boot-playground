@@ -31,7 +31,7 @@ class JwtTokenProvider {
     @Autowired
     private lateinit var userDetailsService: UserDetailsService
 
-    var algorithm: Algorithm? = null
+    private lateinit var algorithm: Algorithm
 
     @PostConstruct
     protected fun init() {
@@ -55,12 +55,12 @@ class JwtTokenProvider {
     }
 
     fun refreshToken(refreshToken: String): TokenVO {
-        var refreshToken = refreshToken
-        if (refreshToken.contains("Bearer ")) refreshToken = refreshToken.substring("Bearer ".length)
+        var token: String = ""
+        if (refreshToken.contains("Bearer ")) token = refreshToken.substring("Bearer ".length)
         val verifier: JWTVerifier = JWT.require(algorithm).build()
-        val decodedJWT: DecodedJWT = verifier.verify(refreshToken)
+        val decodedJWT: DecodedJWT = verifier.verify(token)
         val username: String = decodedJWT.subject
-        val roles: List<String> = decodedJWT.getClaim("roles").asList(String::class.java)
+        val roles: List<String> = decodedJWT.getClaim("roles").asList<String>(String::class.java)
         return createAccessToken(username, roles)
     }
 
