@@ -5,14 +5,6 @@ import br.com.erudio.model.Book
 import java.util.*
 
 class MockBook {
-    fun mockEntity(): Book {
-        return mockEntity(0)
-    }
-
-    fun mockVO(): BookVO {
-        return mockVO(0)
-    }
-
     fun mockEntityList(): ArrayList<Book> {
         val books: ArrayList<Book> = ArrayList<Book>()
         for (i in 0..13) {
