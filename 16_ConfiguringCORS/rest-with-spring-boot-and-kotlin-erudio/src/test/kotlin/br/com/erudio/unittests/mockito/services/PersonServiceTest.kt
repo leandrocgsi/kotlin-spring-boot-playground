@@ -1,49 +1,54 @@
 package br.com.erudio.unittests.mockito.services
 
-import br.com.erudio.exception.RequiredObjectIsNullException
-import br.com.erudio.model.Person
+import br.com.erudio.exceptions.RequiredObjectIsNullException
 import br.com.erudio.repository.PersonRepository
-import br.com.erudio.services.PersonServices
+import br.com.erudio.services.PersonService
 import br.com.erudio.unittests.mocks.MockPerson
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
+
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.jupiter.MockitoExtension
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
-internal class PersonServicesTest {
+internal class PersonServiceTest {
 
-    private var input: MockPerson? = null
+    private lateinit var inputObject: MockPerson
 
     @InjectMocks
-    private lateinit var service: PersonServices
+    private lateinit var service: PersonService
 
     @Mock
     private lateinit var repository: PersonRepository
 
     @BeforeEach
-    fun setupMock() {
-        input = MockPerson()
+    fun setUpMock() {
+        inputObject = MockPerson()
         MockitoAnnotations.openMocks(this)
     }
 
     @Test
     fun findAll() {
-        val list: List<Person> = input!!.mockEntityList()
+        val list = inputObject.mockEntityList()
         `when`(repository.findAll()).thenReturn(list)
+
         val persons = service.findAll()
+
         assertNotNull(persons)
         assertEquals(14, persons.size)
+
         val personOne = persons[1]
+
         assertNotNull(personOne)
         assertNotNull(personOne.key)
         assertNotNull(personOne.links)
@@ -52,7 +57,9 @@ internal class PersonServicesTest {
         assertEquals("First Name Test1", personOne.firstName)
         assertEquals("Last Name Test1", personOne.lastName)
         assertEquals("Female", personOne.gender)
+
         val personFour = persons[4]
+
         assertNotNull(personFour)
         assertNotNull(personFour.key)
         assertNotNull(personFour.links)
@@ -61,7 +68,9 @@ internal class PersonServicesTest {
         assertEquals("First Name Test4", personFour.firstName)
         assertEquals("Last Name Test4", personFour.lastName)
         assertEquals("Male", personFour.gender)
+
         val personSeven = persons[7]
+
         assertNotNull(personSeven)
         assertNotNull(personSeven.key)
         assertNotNull(personSeven.links)
@@ -74,10 +83,12 @@ internal class PersonServicesTest {
 
     @Test
     fun findById() {
-        val person = input!!.mockEntity(1)
-        person.id = 1L
-        `when`(repository.findById(1L)).thenReturn(Optional.of(person))
-        val result = service.findById(1L)
+        val person = inputObject.mockEntity(1)
+        person.id = 1
+        `when`(repository.findById(1)).thenReturn(Optional.of(person))
+
+        val result = service.findById(1)
+
         assertNotNull(result)
         assertNotNull(result.key)
         assertNotNull(result.links)
@@ -90,15 +101,14 @@ internal class PersonServicesTest {
 
     @Test
     fun create() {
-        val entity = input!!.mockEntity(1)
+        val entity = inputObject.mockEntity(1)
 
         val persisted = entity.copy()
-        persisted.id = 1L
-
-        val vo = input!!.mockVO(1)
-        vo.key = 1L
+        persisted.id = 1
 
         `when`(repository.save(entity)).thenReturn(persisted)
+
+        val vo = inputObject.mockVO(1)
         val result = service.create(vo)
 
         assertNotNull(result)
@@ -112,31 +122,29 @@ internal class PersonServicesTest {
     }
 
     @Test
-    fun testCreateWithNullPerson() {
-        val exception: Exception = Assertions.assertThrows(
+    fun createWithNullPerson() {
+        val exception: Exception = assertThrows(
             RequiredObjectIsNullException::class.java
-        ) { service.create(null) }
+        ) {service.create(null)}
+
         val expectedMessage = "It is not allowed to persist a null object!"
         val actualMessage = exception.message
         assertTrue(actualMessage!!.contains(expectedMessage))
     }
 
     @Test
-    fun testUpdate() {
-        val entity = input!!.mockEntity(1)
-        entity.id = 1L
+    fun update() {
+        val entity = inputObject.mockEntity(1)
 
         val persisted = entity.copy()
-        persisted.id = 1L
+        persisted.id = 1
 
-        val vo = input!!.mockVO(1)
-        vo.key = 1L
-
-        `when`(repository.findById(1L)).thenReturn(Optional.of(entity))
-
+        `when`(repository.findById(1)).thenReturn(Optional.of(entity))
         `when`(repository.save(entity)).thenReturn(persisted)
 
+        val vo = inputObject.mockVO(1)
         val result = service.update(vo)
+
         assertNotNull(result)
         assertNotNull(result.key)
         assertNotNull(result.links)
@@ -148,20 +156,20 @@ internal class PersonServicesTest {
     }
 
     @Test
-    fun testUpdateWithNullPerson() {
-        val exception: Exception = Assertions.assertThrows(
+    fun updateWithNullPerson() {
+        val exception: Exception = assertThrows(
             RequiredObjectIsNullException::class.java
-        ) { service.update(null) }
+        ) {service.update(null)}
+
         val expectedMessage = "It is not allowed to persist a null object!"
         val actualMessage = exception.message
         assertTrue(actualMessage!!.contains(expectedMessage))
     }
 
     @Test
-    fun testDelete() {
-        val person = input!!.mockEntity(1)
-        person.id = 1L
-        `when`(repository.findById(1L)).thenReturn(Optional.of(person))
-        service.delete(1L)
+    fun delete() {
+        val entity = inputObject.mockEntity(1)
+        `when`(repository.findById(1)).thenReturn(Optional.of(entity))
+        service.delete(1)
     }
 }
