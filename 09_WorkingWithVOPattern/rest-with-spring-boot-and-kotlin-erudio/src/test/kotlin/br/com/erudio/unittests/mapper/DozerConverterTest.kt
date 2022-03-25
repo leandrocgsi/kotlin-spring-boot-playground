@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import br.com.erudio.data.vo.v1.PersonVO
-import br.com.erudio.mapper.DozerConverter
+import br.com.erudio.mapper.DozerMapper
 import br.com.erudio.model.Person
 import br.com.erudio.unittests.mapper.mocks.MockPerson
 
@@ -19,7 +19,7 @@ class DozerConverterTest {
 
     @Test
     fun parseEntityToVOTest() {
-        val output: PersonVO = DozerConverter.parseObject(inputObject!!.mockEntity(), PersonVO::class.java)
+        val output: PersonVO = DozerMapper.parseObject(inputObject!!.mockEntity(), PersonVO::class.java)
         assertEquals(0.toLong(), output.id)
         assertEquals("First Name Test0", output.firstName)
         assertEquals("Last Name Test0", output.lastName)
@@ -30,7 +30,7 @@ class DozerConverterTest {
     @Test
     fun parseEntityListToVOListTest() {
         val outputList: ArrayList<PersonVO> =
-            DozerConverter.parseListObjects(inputObject!!.mockEntityList(), PersonVO::class.java)
+            DozerMapper.parseListObjects(inputObject!!.mockEntityList(), PersonVO::class.java)
 
         val outputZero: PersonVO = outputList[0]
 
@@ -58,7 +58,7 @@ class DozerConverterTest {
     @Test
     fun parseVOToEntityTest() {
 
-        val output: Person = DozerConverter.parseObject(inputObject!!.mockVO(), Person::class.java)
+        val output: Person = DozerMapper.parseObject(inputObject!!.mockVO(), Person::class.java)
 
         assertEquals(0.toLong(), output.id)
         assertEquals("First Name Test0", output.firstName)
@@ -70,7 +70,7 @@ class DozerConverterTest {
     @Test
     fun parserVOListToEntityListTest() {
 
-        val outputList: ArrayList<Person> = DozerConverter.parseListObjects(inputObject!!.mockVOList(), Person::class.java)
+        val outputList: ArrayList<Person> = DozerMapper.parseListObjects(inputObject!!.mockVOList(), Person::class.java)
 
         val outputZero: Person = outputList[0]
         assertEquals(0.toLong(), outputZero.id)

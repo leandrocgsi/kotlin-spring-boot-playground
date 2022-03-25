@@ -3,7 +3,7 @@ package br.com.erudio.mapper
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 
-object DozerConverter {
+object DozerMapper {
 
     private val mapper: Mapper = DozerBeanMapperBuilder.buildDefault()
 
