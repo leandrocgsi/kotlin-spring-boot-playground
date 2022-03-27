@@ -31,7 +31,6 @@ class AuthControllerYamlTest : AbstractIntegrationTest() {
 
     @Test
     @Order(1)
-    @Throws(JsonProcessingException::class)
     fun testSignin() {
         val user = AccountCredentialsVO()
         user.username = "leandro"

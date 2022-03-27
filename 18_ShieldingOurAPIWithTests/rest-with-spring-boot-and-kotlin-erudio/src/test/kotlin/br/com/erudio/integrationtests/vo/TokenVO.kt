@@ -1,11 +1,9 @@
 package br.com.erudio.integrationtests.vo
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.xml.bind.annotation.XmlRootElement
 import java.util.*
 
-//@XmlRootElement
-//@JsonIgnoreProperties
+@XmlRootElement
 data class TokenVO (
     var username: String? = null,
     var authenticated: Boolean? = null,
