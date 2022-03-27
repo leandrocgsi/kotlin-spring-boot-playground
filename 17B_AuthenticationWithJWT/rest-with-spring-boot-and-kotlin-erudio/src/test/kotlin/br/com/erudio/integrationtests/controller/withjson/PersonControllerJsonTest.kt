@@ -167,7 +167,7 @@ class PersonControllerJsonTest : AbstractIntegrationTest() {
     @Order(6)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val content = given().spec(specification)
+        val strContent = given().spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_JSON)
             .`when`()
             .get()
@@ -175,30 +175,32 @@ class PersonControllerJsonTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(object : TypeRef<List<PersonVO?>?>() {})
+            .asString()
 
-        val foundPersonOne = content?.get(0)
+        val content = objectMapper!!.readValue(strContent, Array<PersonVO>::class.java)
+
+        val foundPersonOne = content[0]
         assertNotNull(foundPersonOne!!.id)
         assertNotNull(foundPersonOne.firstName)
         assertNotNull(foundPersonOne.lastName)
         assertNotNull(foundPersonOne.address)
         assertNotNull(foundPersonOne.gender)
         assertEquals(1, foundPersonOne.id)
-        assertEquals("Leandro", foundPersonOne.firstName)
-        assertEquals("Costa", foundPersonOne.lastName)
-        assertEquals("Uberlândia - Minas Gerais - Brasil", foundPersonOne.address)
+        assertEquals("Ayrton", foundPersonOne.firstName)
+        assertEquals("Senna", foundPersonOne.lastName)
+        assertEquals("São Paulo", foundPersonOne.address)
         assertEquals("Male", foundPersonOne.gender)
 
-        val foundPersonSix = content?.get(5)
-        assertNotNull(foundPersonSix!!.id)
+        val foundPersonSix = content[6]
+        assertNotNull(foundPersonSix.id)
         assertNotNull(foundPersonSix.firstName)
         assertNotNull(foundPersonSix.lastName)
         assertNotNull(foundPersonSix.address)
         assertNotNull(foundPersonSix.gender)
-        assertEquals(9, foundPersonSix.id)
-        assertEquals("Marcos", foundPersonSix.firstName)
-        assertEquals("Paulo", foundPersonSix.lastName)
-        assertEquals("Patos de Minas - Minas Gerais - Brasil", foundPersonSix.address)
+        assertEquals(10, foundPersonSix.id)
+        assertEquals("Nikola", foundPersonSix.firstName)
+        assertEquals("Tesla", foundPersonSix.lastName)
+        assertEquals("Smiljan - Croatia", foundPersonSix.address)
         assertEquals("Male", foundPersonSix.gender)
     }
 

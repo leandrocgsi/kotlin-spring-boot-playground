@@ -26,6 +26,7 @@ class AuthControllerYamlTest : AbstractIntegrationTest() {
     @BeforeAll
     fun setup() {
         objectMapper = YMLMapper()
+        tokenVO = TokenVO()
     }
 
     @Test

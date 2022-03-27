@@ -4,6 +4,7 @@ import br.com.erudio.integrationtests.TestConfigs
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.BookVO
+import br.com.erudio.integrationtests.vo.PersonVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -167,7 +168,7 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
     @Order(6)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val content = given().spec(specification)
+        val strContent = given().spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_JSON)
             .`when`()
             .get()
@@ -175,7 +176,9 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(object : TypeRef<List<BookVO?>?>() {})
+            .asString()
+
+        val content = objectMapper!!.readValue(strContent, Array<BookVO>::class.java)
 
         val foundBookOne: BookVO? = content?.get(0)
 

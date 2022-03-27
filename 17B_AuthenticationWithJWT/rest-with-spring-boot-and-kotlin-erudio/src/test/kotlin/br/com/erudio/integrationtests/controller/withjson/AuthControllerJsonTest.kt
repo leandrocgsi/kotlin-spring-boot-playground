@@ -3,20 +3,27 @@ package br.com.erudio.integrationtests.controller.withjson
 import br.com.erudio.integrationtests.TestConfigs
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
+import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.TokenVO
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured.given
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation::class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class AuthControllerJsonTest : AbstractIntegrationTest() {
 
-    private var tokenVO: TokenVO = TokenVO()
+    private lateinit var tokenVO: TokenVO
+
+    @BeforeAll
+    fun setup() {
+        tokenVO = TokenVO()
+    }
 
     @Test
     @Order(1)

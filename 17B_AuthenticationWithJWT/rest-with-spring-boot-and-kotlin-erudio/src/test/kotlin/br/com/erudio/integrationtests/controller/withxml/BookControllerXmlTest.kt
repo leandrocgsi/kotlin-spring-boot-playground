@@ -162,7 +162,7 @@ class BookControllerXmlTest : AbstractIntegrationTest() {
     @Order(6)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val content = given().spec(specification)
+        val strContent = given().spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
             .`when`()
             .get()
@@ -170,7 +170,9 @@ class BookControllerXmlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(object : TypeRef<List<BookVO?>?>() {})
+            .asString()
+
+        val content = objectMapper!!.readValue(strContent, Array<BookVO>::class.java)
 
         val foundBookOne: BookVO? = content?.get(0)
 

@@ -229,6 +229,7 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             .body()
             .`as`<Array<PersonVO>>(Array<PersonVO>::class.java, objectMapper)
         val people = Arrays.asList(*response)
+		
         val foundPersonOne = people[0]
         assertNotNull(foundPersonOne.id)
         assertNotNull(foundPersonOne.firstName)
@@ -236,20 +237,21 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
         assertNotNull(foundPersonOne.address)
         assertNotNull(foundPersonOne.gender)
         assertEquals(1, foundPersonOne.id)
-        assertEquals("Leandro", foundPersonOne.firstName)
-        assertEquals("Costa", foundPersonOne.lastName)
-        assertEquals("Uberlândia - Minas Gerais - Brasil", foundPersonOne.address)
+        assertEquals("Ayrton", foundPersonOne.firstName)
+        assertEquals("Senna", foundPersonOne.lastName)
+        assertEquals("São Paulo", foundPersonOne.address)
         assertEquals("Male", foundPersonOne.gender)
-        val foundPersonSix = people[5]
+		
+        val foundPersonSix = people[6]
         assertNotNull(foundPersonSix.id)
         assertNotNull(foundPersonSix.firstName)
         assertNotNull(foundPersonSix.lastName)
         assertNotNull(foundPersonSix.address)
         assertNotNull(foundPersonSix.gender)
-        assertEquals(9, foundPersonSix.id)
-        assertEquals("Marcos", foundPersonSix.firstName)
-        assertEquals("Paulo", foundPersonSix.lastName)
-        assertEquals("Patos de Minas - Minas Gerais - Brasil", foundPersonSix.address)
+        assertEquals(10, foundPersonSix.id)
+        assertEquals("Nikola", foundPersonSix.firstName)
+        assertEquals("Tesla", foundPersonSix.lastName)
+        assertEquals("Smiljan - Croatia", foundPersonSix.address)
         assertEquals("Male", foundPersonSix.gender)
     }
 

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
+import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.PersonVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import io.restassured.builder.RequestSpecBuilder
@@ -173,7 +174,7 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
     @Order(8)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val content = given().spec(specification)
+        val strContent = given().spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
             .`when`()
             .get()
@@ -181,7 +182,9 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(object : TypeRef<List<PersonVO?>?>() {})
+            .asString()
+
+        val content = objectMapper!!.readValue(strContent, Array<PersonVO>::class.java)
 
         val foundPersonOne = content?.get(0)
         assertNotNull(foundPersonOne!!.id)
@@ -190,20 +193,21 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         assertNotNull(foundPersonOne.address)
         assertNotNull(foundPersonOne.gender)
         assertEquals(1, foundPersonOne.id)
-        assertEquals("Leandro", foundPersonOne.firstName)
-        assertEquals("Costa", foundPersonOne.lastName)
-        assertEquals("Uberlândia - Minas Gerais - Brasil", foundPersonOne.address)
+        assertEquals("Ayrton", foundPersonOne.firstName)
+        assertEquals("Senna", foundPersonOne.lastName)
+        assertEquals("São Paulo", foundPersonOne.address)
         assertEquals("Male", foundPersonOne.gender)
-        val foundPersonSix = content?.get(5)
+		
+        val foundPersonSix = content[6]
         assertNotNull(foundPersonSix!!.id)
         assertNotNull(foundPersonSix.firstName)
         assertNotNull(foundPersonSix.lastName)
         assertNotNull(foundPersonSix.address)
         assertNotNull(foundPersonSix.gender)
-        assertEquals(9, foundPersonSix.id)
-        assertEquals("Marcos", foundPersonSix.firstName)
-        assertEquals("Paulo", foundPersonSix.lastName)
-        assertEquals("Patos de Minas - Minas Gerais - Brasil", foundPersonSix.address)
+        assertEquals(10, foundPersonSix.id)
+        assertEquals("Nikola", foundPersonSix.firstName)
+        assertEquals("Tesla", foundPersonSix.lastName)
+        assertEquals("Smiljan - Croatia", foundPersonSix.address)
         assertEquals("Male", foundPersonSix.gender)
     }
 

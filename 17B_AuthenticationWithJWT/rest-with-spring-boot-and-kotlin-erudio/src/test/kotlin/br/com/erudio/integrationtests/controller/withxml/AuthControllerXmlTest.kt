@@ -5,12 +5,9 @@ import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import io.restassured.RestAssured.given
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -18,7 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthControllerXmlTest : AbstractIntegrationTest() {
 
-    private var tokenVO: TokenVO? = null
+    private lateinit var tokenVO: TokenVO
+
+    @BeforeAll
+    fun setup() {
+        tokenVO = TokenVO()
+    }
 
     @Test
     @Order(1)
@@ -51,7 +53,7 @@ class AuthControllerXmlTest : AbstractIntegrationTest() {
             .basePath("/auth/refresh")
             .port(TestConfigs.SERVER_PORT)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
-            .pathParam("username", tokenVO!!.username)
+            .pathParam("username", tokenVO.username)
             .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + tokenVO!!.refreshToken)
             .`when`()
             .put("{username}")
@@ -61,7 +63,7 @@ class AuthControllerXmlTest : AbstractIntegrationTest() {
             .body()
             .`as`(TokenVO::class.java)
 
-        assertNotNull(tokenVO!!.accessToken)
-        assertNotNull(tokenVO!!.refreshToken)
+        assertNotNull(tokenVO.accessToken)
+        assertNotNull(tokenVO.refreshToken)
     }
 }
