@@ -23,7 +23,7 @@ class AuthController {
         return if (data!!.username.isNullOrBlank() || data.password.isNullOrBlank())
             ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Invalid client request")
-            else authService.signin(data!!)
+            else authService.signin(data)
     }
 
     @Operation(summary = "Refresh token for authenticated user and returns a token")

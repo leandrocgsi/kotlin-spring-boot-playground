@@ -36,7 +36,6 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 		token = ""
 	}
 
-
 	@Test
 	@Order(0)
 	fun authorization() {
@@ -69,7 +68,9 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 				TestConfigs.HEADER_PARAM_ORIGIN,
 				TestConfigs.ORIGIN_ERUDIO,
 			)
-			.addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer $token")
+			.addHeader(
+				TestConfigs.HEADER_PARAM_AUTHORIZATION,
+				"Bearer $token")
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(RequestLoggingFilter(LogDetail.ALL))
