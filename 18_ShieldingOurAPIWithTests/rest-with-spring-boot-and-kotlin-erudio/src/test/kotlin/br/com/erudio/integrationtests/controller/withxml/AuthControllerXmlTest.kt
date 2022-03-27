@@ -25,9 +25,10 @@ internal class AuthControllerXmlTest : AbstractIntegrationTest() {
     @Test
     @Order(1)
     fun testSignin() {
-        val user = AccountCredentialsVO()
-        user.username = "leandro"
-        user.password = "admin123"
+        val user = AccountCredentialsVO(
+            username = "leandro",
+            password = "admin123"
+        )
 
         tokenVO = given()
             .basePath("/auth/signin")
