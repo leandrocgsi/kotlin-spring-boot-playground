@@ -1,6 +1,7 @@
 package br.com.erudio.integrationtests.controller.withyaml
 
 import br.com.erudio.integrationtests.TestConfigs
+import br.com.erudio.integrationtests.controller.withyaml.mapper.YMLMapper
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.PersonVO
@@ -11,9 +12,12 @@ import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
+import io.restassured.config.EncoderConfig
+import io.restassured.config.RestAssuredConfig
 import io.restassured.filter.log.LogDetail
 import io.restassured.filter.log.RequestLoggingFilter
 import io.restassured.filter.log.ResponseLoggingFilter
+import io.restassured.http.ContentType
 import io.restassured.specification.RequestSpecification
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -25,14 +29,13 @@ import org.springframework.boot.test.context.SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PersonControllerYamlTest : AbstractIntegrationTest() {
 
-    private var specification: RequestSpecification? = null
-    private var objectMapper: ObjectMapper? = null
-    private var person: PersonVO? = null
+    private lateinit var specification: RequestSpecification
+    private lateinit var objectMapper: YMLMapper
+    private lateinit var person: PersonVO
 
     @BeforeAll
     fun setup() {
-        objectMapper = ObjectMapper()
-        objectMapper!!.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        objectMapper = YMLMapper()
         person = PersonVO()
     }
 
@@ -40,20 +43,30 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
     @Order(1)
     fun authorization() {
         val user = AccountCredentialsVO()
+
         user.username = "leandro"
         user.password = "admin123"
+
         val token = given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
             .basePath("/auth/signin")
             .port(TestConfigs.SERVER_PORT)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(user)
+            .body(user, objectMapper)
             .`when`()
             .post()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(TokenVO::class.java)
+            .`as`(TokenVO::class.java, objectMapper)
             .accessToken
 
         specification = RequestSpecBuilder()
@@ -70,17 +83,26 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testCreate() {
         mockPerson()
-        val content: String = given().spec(specification)
+        val createdPerson = given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(person)
+            .body(person, objectMapper)
             .`when`()
             .post()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .asString()
-        val createdPerson = objectMapper!!.readValue(content, PersonVO::class.java)
+            .`as`(PersonVO::class.java, objectMapper)
+
         person = createdPerson
         assertNotNull(createdPerson.id)
         assertNotNull(createdPerson.firstName)
@@ -98,18 +120,28 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
     @Order(3)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testUpdate() {
-        person!!.lastName = "Matthew Stallman"
-        val content: String = given().spec(specification)
+        person.lastName = "Matthew Stallman"
+
+        val updatedPerson = given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(person)
+            .body(person, objectMapper)
             .`when`()
             .post()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .asString()
-        val updatedPerson = objectMapper!!.readValue(content, PersonVO::class.java)
+            .`as`(PersonVO::class.java, objectMapper)
+
         assertNotNull(updatedPerson.id)
         assertNotNull(updatedPerson.firstName)
         assertNotNull(updatedPerson.lastName)
@@ -126,7 +158,16 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
     @Order(4)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindById() {
-        val content: String = given().spec(specification)
+        val foundPerson = given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
             .pathParam("id", person!!.id)
             .`when`()
@@ -135,8 +176,8 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .asString()
-        val foundPerson = objectMapper!!.readValue(content, PersonVO::class.java)
+            .`as`(PersonVO::class.java, objectMapper)
+
         assertNotNull(foundPerson.id)
         assertNotNull(foundPerson.firstName)
         assertNotNull(foundPerson.lastName)
@@ -152,9 +193,18 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
     @Test
     @Order(5)
     fun testDelete() {
-        given().spec(specification)
+        given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .pathParam("id", person!!.id)
+            .pathParam("id", person.id)
             .`when`()
             .delete("{id}")
             .then()
@@ -164,7 +214,16 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
     @Test
     @Order(6)
     fun testFindAll() {
-        val strContent = given().spec(specification)
+        val response: Array<PersonVO> = given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
             .`when`()
             .get()
@@ -172,12 +231,12 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .asString()
+            .`as`(Array<PersonVO>::class.java, objectMapper)
 
-        val content = objectMapper!!.readValue(strContent, Array<PersonVO>::class.java)
+        val people = listOf(*response)
 
-        val foundPersonOne = content[0]
-        assertNotNull(foundPersonOne!!.id)
+        val foundPersonOne = people[0]
+        assertNotNull(foundPersonOne.id)
         assertNotNull(foundPersonOne.firstName)
         assertNotNull(foundPersonOne.lastName)
         assertNotNull(foundPersonOne.address)
@@ -188,7 +247,7 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
         assertEquals("São Paulo", foundPersonOne.address)
         assertEquals("Male", foundPersonOne.gender)
 
-        val foundPersonSix = content[6]
+        val foundPersonSix = people[6]
         assertNotNull(foundPersonSix.id)
         assertNotNull(foundPersonSix.firstName)
         assertNotNull(foundPersonSix.lastName)
@@ -210,7 +269,16 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             .addFilter(RequestLoggingFilter(LogDetail.ALL))
             .addFilter(ResponseLoggingFilter(LogDetail.ALL))
             .build()
-        given().spec(specificationWithoutToken)
+        given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
+            .spec(specificationWithoutToken)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
             .`when`()
             .get()
