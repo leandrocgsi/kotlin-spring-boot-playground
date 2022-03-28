@@ -79,7 +79,7 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
     @Order(2)
     fun testCreate() {
         mockPerson()
-        val createdPerson = given()
+        val item = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -99,18 +99,19 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
             .body()
             .`as`(PersonVO::class.java, objectMapper)
 
-        person = createdPerson
+        person = item
 
-        assertNotNull(createdPerson.id)
-        assertNotNull(createdPerson.firstName)
-        assertNotNull(createdPerson.lastName)
-        assertNotNull(createdPerson.address)
-        assertNotNull(createdPerson.gender)
-        assertTrue(createdPerson.id > 0)
-        assertEquals("Richard", createdPerson.firstName)
-        assertEquals("Stallman", createdPerson.lastName)
-        assertEquals("New York City, New York, US", createdPerson.address)
-        assertEquals("Male", createdPerson.gender)
+        assertNotNull(item.id)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertTrue(item.id > 0)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Stallman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
+        assertEquals(true, item.enabled)
     }
 
     @Test
@@ -118,7 +119,7 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testUpdate() {
         person.lastName = "Matthew Stallman"
-        val updatedPerson = given()
+        val item = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -138,23 +139,53 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
             .body()
             .`as`(PersonVO::class.java, objectMapper)
 
-        assertNotNull(updatedPerson.id)
-        assertNotNull(updatedPerson.firstName)
-        assertNotNull(updatedPerson.lastName)
-        assertNotNull(updatedPerson.address)
-        assertNotNull(updatedPerson.gender)
-        assertEquals(updatedPerson.id, person.id)
-        assertEquals("Richard", updatedPerson.firstName)
-        assertEquals("Matthew Stallman", updatedPerson.lastName)
-        assertEquals("New York City, New York, US", updatedPerson.address)
-        assertEquals("Male", updatedPerson.gender)
+        assertNotNull(item.id)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertEquals(item.id, person.id)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Matthew Stallman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
+        assertEquals(true, item.enabled)
     }
+
 
     @Test
     @Order(4)
+    fun testDisablePerson() {
+
+        val item = given().spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_YML)
+            .pathParam("id", person.id)
+            .`when`()
+            .patch("{id}")
+            .then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .`as`(PersonVO::class.java, objectMapper)
+
+        assertNotNull(item.id)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertEquals(item.id, person.id)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Matthew Stallman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
+        assertEquals(false, item.enabled)
+    }
+
+    @Test
+    @Order(5)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindById() {
-        val foundPerson = given()
+        val item = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -174,20 +205,21 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
             .body()
             .`as`(PersonVO::class.java, objectMapper)
 
-        assertNotNull(foundPerson.id)
-        assertNotNull(foundPerson.firstName)
-        assertNotNull(foundPerson.lastName)
-        assertNotNull(foundPerson.address)
-        assertNotNull(foundPerson.gender)
-        assertEquals(foundPerson.id, person.id)
-        assertEquals("Richard", foundPerson.firstName)
-        assertEquals("Matthew Stallman", foundPerson.lastName)
-        assertEquals("New York City, New York, US", foundPerson.address)
-        assertEquals("Male", foundPerson.gender)
+        assertNotNull(item.id)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertEquals(item.id, person.id)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Matthew Stallman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
+        assertEquals(false, item.enabled)
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     fun testDelete() {
         given()
             .config(
@@ -208,7 +240,7 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     fun testFindAll() {
         val content = given()
             .config(
@@ -229,33 +261,35 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
             .body()
             .`as`(Array<PersonVO>::class.java, objectMapper)
 
-        val foundPersonOne = content[0]
-        assertNotNull(foundPersonOne.id)
-        assertNotNull(foundPersonOne.firstName)
-        assertNotNull(foundPersonOne.lastName)
-        assertNotNull(foundPersonOne.address)
-        assertNotNull(foundPersonOne.gender)
-        assertEquals(1, foundPersonOne.id)
-        assertEquals("Ayrton", foundPersonOne.firstName)
-        assertEquals("Senna", foundPersonOne.lastName)
-        assertEquals("São Paulo", foundPersonOne.address)
-        assertEquals("Male", foundPersonOne.gender)
+        val item1 = content[0]
+        assertNotNull(item1.id)
+        assertNotNull(item1.firstName)
+        assertNotNull(item1.lastName)
+        assertNotNull(item1.address)
+        assertNotNull(item1.gender)
+        assertEquals(1, item1.id)
+        assertEquals("Ayrton", item1.firstName)
+        assertEquals("Senna", item1.lastName)
+        assertEquals("São Paulo", item1.address)
+        assertEquals("Male", item1.gender)
+        assertEquals(true, item1.enabled)
 
-        val foundPersonSix = content[6]
-        assertNotNull(foundPersonSix.id)
-        assertNotNull(foundPersonSix.firstName)
-        assertNotNull(foundPersonSix.lastName)
-        assertNotNull(foundPersonSix.address)
-        assertNotNull(foundPersonSix.gender)
-        assertEquals(10, foundPersonSix.id)
-        assertEquals("Nikola", foundPersonSix.firstName)
-        assertEquals("Tesla", foundPersonSix.lastName)
-        assertEquals("Smiljan - Croatia", foundPersonSix.address)
-        assertEquals("Male", foundPersonSix.gender)
+        val item2 = content[6]
+        assertNotNull(item2.id)
+        assertNotNull(item2.firstName)
+        assertNotNull(item2.lastName)
+        assertNotNull(item2.address)
+        assertNotNull(item2.gender)
+        assertEquals(10, item2.id)
+        assertEquals("Nikola", item2.firstName)
+        assertEquals("Tesla", item2.lastName)
+        assertEquals("Smiljan - Croatia", item2.address)
+        assertEquals("Male", item2.gender)
+        assertEquals(true, item2.enabled)
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     fun testFindAllWithoutToken() {
         val specificationWithoutToken: RequestSpecification = RequestSpecBuilder()
             .setBasePath("/api/person/v1")
@@ -286,5 +320,6 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
         person.lastName = "Stallman"
         person.address = "New York City, New York, US"
         person.gender = "Male"
+        person.enabled = true
     }
 }
