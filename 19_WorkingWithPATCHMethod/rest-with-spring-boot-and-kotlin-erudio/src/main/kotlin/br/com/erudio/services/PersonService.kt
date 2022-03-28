@@ -8,8 +8,10 @@ import br.com.erudio.mapper.DozerMapper
 import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.logging.Logger
 
 @Service
@@ -64,6 +66,17 @@ class PersonService {
         val personVO: PersonVO = DozerMapper.parseObject(repository.save(entity), PersonVO::class.java)
         val withSelfRel = linkTo(PersonController::class.java).slash(personVO.key).withSelfRel()
         personVO.add(withSelfRel)
+        return personVO
+    }
+
+    @Transactional
+    fun disablePerson(id: Long?): PersonVO? {
+        repository.disablePersons(id)
+        val entity = repository.findById(id!!)
+            .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
+        val personVO: PersonVO? = DozerMapper.parseObject(entity, PersonVO::class.java)
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
+        personVO!!.add(withSelfRel)
         return personVO
     }
 
