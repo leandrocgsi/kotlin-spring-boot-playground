@@ -28,12 +28,14 @@ class PersonService {
     fun findAll(pageable: Pageable): Page<PersonVO> {
         logger.info("Finding all people!")
         val page = repository.findAll(pageable)
-        var vos = page.map { o -> DozerMapper.parseObject(o, PersonVO::class.java) }
-        //val vos = DozerMapper.parsePageOfObjects(page, PersonVO::class.java)
+        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
+        /*
         for (person in vos) {
             val withSelfRel = linkTo(PersonController::class.java).slash(person.key).withSelfRel()
             person.add(withSelfRel)
         }
+        */
         return vos
     }
 
