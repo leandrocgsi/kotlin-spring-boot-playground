@@ -8,6 +8,9 @@ import br.com.erudio.mapper.DozerMapper
 import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
@@ -22,10 +25,11 @@ class PersonService {
 
     private val logger = Logger.getLogger(PersonService::class.java.name)
 
-    fun findAll(): List<PersonVO> {
+    fun findAll(pageable: Pageable): Page<PersonVO> {
         logger.info("Finding all people!")
-        val persons = repository.findAll()
-        val vos = DozerMapper.parseListObjects(persons, PersonVO::class.java)
+        val page = repository.findAll(pageable)
+        var vos = page.map { o -> DozerMapper.parseObject(o, PersonVO::class.java) }
+        //val vos = DozerMapper.parsePageOfObjects(page, PersonVO::class.java)
         for (person in vos) {
             val withSelfRel = linkTo(PersonController::class.java).slash(person.key).withSelfRel()
             person.add(withSelfRel)
