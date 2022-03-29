@@ -8,7 +8,7 @@ import java.util.ArrayList
 
 @Entity
 @Table(name = "users")
-class User : UserDetails, Serializable {
+class User : UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,10 +53,6 @@ class User : UserDetails, Serializable {
             }
             return roles
         }
-
-    fun setPassword(password: String?) {
-        this.password = password
-    }
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
         return permissions!!
