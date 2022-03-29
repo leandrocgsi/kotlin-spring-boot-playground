@@ -15,7 +15,7 @@ class JwtTokenFilter(@field:Autowired private val tokenProvider: JwtTokenProvide
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val token = tokenProvider.resolveToken((request as HttpServletRequest))
-        if (token != null && tokenProvider.validateToken(token)) {
+        if (!token.isNullOrEmpty() && tokenProvider.validateToken(token)) {
             val auth = tokenProvider.getAuthentication(token)
             SecurityContextHolder.getContext().authentication = auth
         }

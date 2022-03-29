@@ -16,14 +16,16 @@ import br.com.erudio.security.jwt.JwtTokenProvider
 
 @Service
 class AuthServices {
-    @Autowired
-    var authenticationManager: AuthenticationManager? = null
 
     @Autowired
-    var tokenProvider: JwtTokenProvider? = null
+    private lateinit var authenticationManager: AuthenticationManager
 
     @Autowired
-    var repository: UserRepository? = null
+    private lateinit var tokenProvider: JwtTokenProvider
+
+    @Autowired
+    private lateinit var repository: UserRepository
+
     fun signin(data: AccountCredentialsVO): ResponseEntity<*> {
         return try {
             val username = data.username

@@ -34,13 +34,10 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    @Throws(Exception::class)
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
+    override fun authenticationManagerBean(): AuthenticationManager = super.authenticationManagerBean()
 
     @Throws(Exception::class)
-    protected override fun configure(http: HttpSecurity) {
+    override fun configure(http: HttpSecurity) {
         http
             .httpBasic().disable()
             .csrf().disable()

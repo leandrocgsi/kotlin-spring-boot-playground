@@ -44,14 +44,14 @@ class JwtTokenProvider {
         val validity = Date(now.time + validityInMilliseconds)
         val accessToken = getAccessToken(username, roles, now, validity)
         val refreshToken = getRefreshToken(username, roles, now)
-        val tokenResponse = TokenVO()
-        tokenResponse.username = username
-        tokenResponse.authenticated = true
-        tokenResponse.accessToken = accessToken
-        tokenResponse.refreshToken = refreshToken
-        tokenResponse.created = now
-        tokenResponse.expiration = validity
-        return tokenResponse
+        return TokenVO(
+            username = username,
+            authenticated = true,
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+            created = now,
+            expiration = validity
+        )
     }
 
     fun refreshToken(refreshToken: String): TokenVO {
@@ -94,7 +94,7 @@ class JwtTokenProvider {
 
     fun resolveToken(req: HttpServletRequest): String? {
         val bearerToken = req.getHeader("Authorization")
-        return if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        return if (!bearerToken.isNullOrBlank() && bearerToken.startsWith("Bearer ")) {
             bearerToken.substring("Bearer ".length)
         } else null
     }
