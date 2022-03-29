@@ -41,7 +41,7 @@ class PersonService {
         vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
         val findAllLink = linkTo(
             WebMvcLinkBuilder.methodOn(PersonController::class.java)
-                .findAll(pageable.pageNumber, pageable.pageSize/*, "asc"*/)
+                .findAll(pageable.pageNumber, pageable.pageSize, "asc")
         ).withSelfRel()
         //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
         return vos
@@ -54,10 +54,19 @@ class PersonService {
         vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
         val findAllLink = linkTo(
             WebMvcLinkBuilder.methodOn(PersonController::class.java)
-                .findAll(pageable.pageNumber, pageable.pageSize/*, "asc"*/)
+                .findAll(pageable.pageNumber, pageable.pageSize, "asc")
         ).withSelfRel()
         //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
         return CollectionModel.of<PersonVO>(vos, findAllLink)
+    }
+
+    // I OWE A BEER -> https://niks36.medium.com/spring-hateoas-part-2-a06a57fbee02
+    fun findAll1(pageable: Pageable): Page<PersonVO> {
+        logger.info("Finding all people!")
+        val page = repository.findAll(pageable)
+        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
+        return vos
     }
 
     // I OWE A BEER -> https://niks36.medium.com/spring-hateoas-part-2-a06a57fbee02
@@ -68,7 +77,7 @@ class PersonService {
         vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
         val findAllLink = linkTo(
             WebMvcLinkBuilder.methodOn(PersonController::class.java)
-                .findAll(pageable.pageNumber, pageable.pageSize/*, "asc"*/)
+                .findAll(pageable.pageNumber, pageable.pageSize, "asc")
         ).withSelfRel()
         return pagedResourcesAssembler.toModel(vos, findAllLink)
     }
