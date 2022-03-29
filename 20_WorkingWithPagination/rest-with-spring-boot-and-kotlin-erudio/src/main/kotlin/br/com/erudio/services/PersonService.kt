@@ -9,13 +9,14 @@ import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.logging.Logger
+
 
 @Service
 class PersonService {
@@ -30,12 +31,11 @@ class PersonService {
         val page = repository.findAll(pageable)
         var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
         vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
-        /*
-        for (person in vos) {
-            val withSelfRel = linkTo(PersonController::class.java).slash(person.key).withSelfRel()
-            person.add(withSelfRel)
-        }
-        */
+        val findAllLink = linkTo(
+            WebMvcLinkBuilder.methodOn(PersonController::class.java)
+                .findAll(pageable.pageNumber, pageable.pageSize/*, "asc"*/)
+        ).withSelfRel()
+        //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
         return vos
     }
 
