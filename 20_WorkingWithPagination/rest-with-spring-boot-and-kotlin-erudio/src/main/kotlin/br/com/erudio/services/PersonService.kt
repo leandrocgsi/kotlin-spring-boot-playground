@@ -9,8 +9,11 @@ import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PagedResourcesAssembler
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
@@ -23,6 +26,9 @@ class PersonService {
 
     @Autowired
     private lateinit var repository: PersonRepository
+
+    @Autowired
+    private lateinit var pagedResourcesAssembler: PagedResourcesAssembler<PersonVO>
 
     private val logger = Logger.getLogger(PersonService::class.java.name)
 
@@ -37,6 +43,32 @@ class PersonService {
         ).withSelfRel()
         //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
         return vos
+    }
+
+    fun findAll2(pageable: Pageable): CollectionModel<PersonVO> {
+        logger.info("Finding all people!")
+        val page = repository.findAll(pageable)
+        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
+        val findAllLink = linkTo(
+            WebMvcLinkBuilder.methodOn(PersonController::class.java)
+                .findAll(pageable.pageNumber, pageable.pageSize/*, "asc"*/)
+        ).withSelfRel()
+        //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
+        return CollectionModel.of<PersonVO>(vos, findAllLink)
+    }
+
+    fun findAll3(pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
+        logger.info("Finding all people!")
+        val page = repository.findAll(pageable)
+        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
+        val findAllLink = linkTo(
+            WebMvcLinkBuilder.methodOn(PersonController::class.java)
+                .findAll(pageable.pageNumber, pageable.pageSize/*, "asc"*/)
+        ).withSelfRel()
+        //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
+        return pagedResourcesAssembler.toModel(vos, findAllLink)
     }
 
     fun findById(id: Long): PersonVO {
