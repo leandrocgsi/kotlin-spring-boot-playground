@@ -82,6 +82,19 @@ class PersonService {
         return pagedResourcesAssembler.toModel(vos, findAllLink)
     }
 
+    fun findPersonByName(firstName: String, pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
+        logger.info("Finding one person by name!")
+        val page: Page<Person> = repository.findPersonByName(firstName, pageable)
+
+        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
+        val findPersonByNameLink = linkTo(
+            WebMvcLinkBuilder.methodOn(PersonController::class.java)
+                .findPersonByName(firstName, pageable.pageNumber, pageable.pageSize, "asc")!!
+        ).withSelfRel()
+        return pagedResourcesAssembler.toModel(vos, findPersonByNameLink)
+    }
+
     fun findById(id: Long): PersonVO {
         logger.info("Finding one person with ID $id!")
         var person = repository.findById(id)

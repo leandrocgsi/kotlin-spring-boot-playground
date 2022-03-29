@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
 import org.springframework.http.ResponseEntity
@@ -62,6 +63,38 @@ class PersonController {
         val sortDirection: Sort.Direction = if ("desc".equals(direction, ignoreCase = true)) Sort.Direction.DESC else Sort.Direction.ASC
         val pageable: Pageable = PageRequest.of(page, size , Sort.by(sortDirection, "firstName"))
         return ResponseEntity.ok(service.findAll(pageable))
+    }
+
+    @GetMapping(value = ["/findPersonByName/{firstName}"], produces = ["application/json", "application/xml", "application/x-yaml"])
+    @Operation(
+        summary = "Find persons by name",
+        description = "Find persons by name",
+        tags = ["People"],
+        responses = [
+            ApiResponse(
+                description = "Success",
+                responseCode = "200",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = PersonVO::class))
+                )]
+            ),
+            ApiResponse(description = "No Content", responseCode = "204", content = [Content(schema = Schema(implementation = Unit::class))]),
+            ApiResponse(description = "Bad Request", responseCode = "400", content = [Content(schema = Schema(implementation = Unit::class))]),
+            ApiResponse(description = "Unauthorized", responseCode = "401", content = [Content(schema = Schema(implementation = Unit::class))]),
+            ApiResponse(description = "Not Found", responseCode = "404", content = [Content(schema = Schema(implementation = Unit::class))]),
+            ApiResponse(description = "Internal error", responseCode = "500", content = [Content(schema = Schema(implementation = Unit::class))])
+        ]
+    )
+    fun findPersonByName(
+        @PathVariable("firstName") firstName: String,
+        @RequestParam(value = "page", defaultValue = "0") page: Int,
+        @RequestParam(value = "limit", defaultValue = "12") limit: Int,
+        @RequestParam(value = "direction", defaultValue = "asc") direction: String
+    ): ResponseEntity<PagedModel<EntityModel<PersonVO>>> {
+        val sortDirection: Sort.Direction = if ("desc".equals(direction, ignoreCase = true)) Sort.Direction.DESC else Sort.Direction.ASC
+        val pageable: Pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "firstName"))
+        return ResponseEntity.ok(service.findPersonByName(firstName, pageable))
     }
 
     @CrossOrigin(origins = ["http://localhost:8080"])
