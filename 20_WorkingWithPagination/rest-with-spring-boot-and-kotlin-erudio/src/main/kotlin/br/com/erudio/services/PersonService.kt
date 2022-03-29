@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.logging.Logger
 
+// https://stackoverflow.com/questions/63439423/how-to-extend-collectionmodel-pagedmodel-in-spring-hateoas
+// https://stackoverflow.com/questions/63087074/pagingandsortingrepository-custom-pageable-response-structure/63087937#63087937
 
 @Service
 class PersonService {
@@ -32,7 +34,7 @@ class PersonService {
 
     private val logger = Logger.getLogger(PersonService::class.java.name)
 
-    fun findAll(pageable: Pageable): Page<PersonVO> {
+    fun findAllZ1(pageable: Pageable): Page<PersonVO> {
         logger.info("Finding all people!")
         val page = repository.findAll(pageable)
         var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
@@ -45,7 +47,7 @@ class PersonService {
         return vos
     }
 
-    fun findAll2(pageable: Pageable): CollectionModel<PersonVO> {
+    fun findAllZ2(pageable: Pageable): CollectionModel<PersonVO> {
         logger.info("Finding all people!")
         val page = repository.findAll(pageable)
         var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
@@ -58,7 +60,8 @@ class PersonService {
         return CollectionModel.of<PersonVO>(vos, findAllLink)
     }
 
-    fun findAll3(pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
+    // I OWE A BEER -> https://niks36.medium.com/spring-hateoas-part-2-a06a57fbee02
+    fun findAll(pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
         logger.info("Finding all people!")
         val page = repository.findAll(pageable)
         var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
@@ -67,7 +70,6 @@ class PersonService {
             WebMvcLinkBuilder.methodOn(PersonController::class.java)
                 .findAll(pageable.pageNumber, pageable.pageSize/*, "asc"*/)
         ).withSelfRel()
-        //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
         return pagedResourcesAssembler.toModel(vos, findAllLink)
     }
 
