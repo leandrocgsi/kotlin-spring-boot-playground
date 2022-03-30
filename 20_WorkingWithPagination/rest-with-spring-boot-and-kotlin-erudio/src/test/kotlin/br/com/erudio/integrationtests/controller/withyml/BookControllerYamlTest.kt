@@ -6,6 +6,8 @@ import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.TokenVO
+import br.com.erudio.integrationtests.vo.wrappers.WrapperBookVO
+import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
 import io.restassured.RestAssured.given
@@ -201,7 +203,7 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     @Order(6)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val response = given()
+        val wrapper = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -218,27 +220,30 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(Array<BookVO>::class.java, objectMapper)
+            .`as`(WrapperBookVO::class.java, objectMapper)
 
-        val content: MutableList<BookVO> = Arrays.asList(*response)
-        val foundBookOne: BookVO = content[0]
+        val books = wrapper.embedded!!.books
+
+        val foundBookOne = books?.get(0)
+
+        assertNotNull(foundBookOne!!.id)
         assertNotNull(foundBookOne.id)
         assertNotNull(foundBookOne.title)
         assertNotNull(foundBookOne.author)
         assertNotNull(foundBookOne.price)
         assertTrue(foundBookOne.id > 0)
-        assertEquals("Working effectively with legacy code", foundBookOne.title)
-        assertEquals("Michael C. Feathers", foundBookOne.author)
-        assertEquals(49.00, foundBookOne.price)
-        val foundBookFive: BookVO = content[4]
+        assertEquals("Big Data: como extrair volume, variedade, velocidade e valor da avalanche de informação cotidiana", foundBookOne.title)
+        assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", foundBookOne.author)
+        assertEquals(54.00, foundBookOne.price)
+        val foundBookFive: BookVO = books[4]
         assertNotNull(foundBookFive.id)
         assertNotNull(foundBookFive.title)
         assertNotNull(foundBookFive.author)
         assertNotNull(foundBookFive.price)
         assertTrue(foundBookFive.id > 0)
-        assertEquals("Code complete", foundBookFive.title)
-        assertEquals("Steve McConnell", foundBookFive.author)
-        assertEquals(58.0, foundBookFive.price)
+        assertEquals("Domain Driven Design", foundBookFive.title)
+        assertEquals("Eric Evans", foundBookFive.author)
+        assertEquals(92.0, foundBookFive.price)
     }
 
     private fun mockBook() {
