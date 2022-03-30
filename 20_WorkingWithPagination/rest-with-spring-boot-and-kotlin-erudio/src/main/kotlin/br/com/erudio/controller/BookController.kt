@@ -59,7 +59,7 @@ class BookController {
                 @RequestParam(value = "direction", defaultValue = "asc") direction: String
     ): ResponseEntity<PagedModel<EntityModel<BookVO>>> {
         val sortDirection: Sort.Direction = if ("desc".equals(direction, ignoreCase = true)) Sort.Direction.DESC else Sort.Direction.ASC
-        val pageable: Pageable = PageRequest.of(page, size , Sort.by(sortDirection, "firstName"))
+        val pageable: Pageable = PageRequest.of(page, size , Sort.by(sortDirection, "title"))
         return ResponseEntity.ok(service.findAll(pageable))
     }
 
