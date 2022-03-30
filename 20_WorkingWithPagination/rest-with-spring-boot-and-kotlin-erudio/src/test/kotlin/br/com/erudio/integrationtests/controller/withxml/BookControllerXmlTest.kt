@@ -6,7 +6,6 @@ import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import br.com.erudio.integrationtests.vo.wrappers.WrapperBookVO
-import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonMappingException
@@ -190,7 +189,7 @@ class BookControllerXmlTest : AbstractIntegrationTest() {
         assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", foundBookOne.author)
         assertEquals(54.00, foundBookOne.price)
 
-        val foundBookFive = content[4]
+        val foundBookFive: BookVO? = content?.get(4)
         assertNotNull(foundBookFive!!.id)
         assertNotNull(foundBookFive.title)
         assertNotNull(foundBookFive.author)

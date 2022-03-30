@@ -1,22 +1,20 @@
-package br.com.erudio.integrationtests.controller.withyml
+package br.com.erudio.integrationtests.controller.withjson
 
 import br.com.erudio.integrationtests.TestConfigs
-import br.com.erudio.integrationtests.controller.withyml.mapper.YMLMapper
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import br.com.erudio.integrationtests.vo.wrappers.WrapperBookVO
 import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
-import io.restassured.config.EncoderConfig
-import io.restassured.config.RestAssuredConfig
 import io.restassured.filter.log.LogDetail
 import io.restassured.filter.log.RequestLoggingFilter
 import io.restassured.filter.log.ResponseLoggingFilter
-import io.restassured.http.ContentType
 import io.restassured.specification.RequestSpecification
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -27,15 +25,16 @@ import java.util.*
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BookControllerYamlTest : AbstractIntegrationTest() {
+class  BookControllerJsonTest : AbstractIntegrationTest() {
 
     private lateinit var specification: RequestSpecification
-    private lateinit var objectMapper: YMLMapper
+    private lateinit var objectMapper: ObjectMapper
     private lateinit var book: BookVO
 
     @BeforeAll
     fun setup() {
-        objectMapper = YMLMapper()
+        objectMapper = ObjectMapper()
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         book = BookVO()
     }
 
@@ -45,27 +44,21 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
         val user = AccountCredentialsVO()
         user.username = "leandro"
         user.password = "admin123"
+
         val token = given()
-            .config(
-                RestAssuredConfig
-                    .config()
-                    .encoderConfig(
-                        EncoderConfig.encoderConfig()
-                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
-                    )
-            )
             .basePath("/auth/signin")
             .port(TestConfigs.SERVER_PORT)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(user, objectMapper)
+            .contentType(TestConfigs.CONTENT_TYPE_JSON)
+            .body(user)
             .`when`()
             .post()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(TokenVO::class.java, objectMapper)
+            .`as`(TokenVO::class.java)
             .accessToken
+
         specification = RequestSpecBuilder()
             .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer $token")
             .setBasePath("/api/book/v1")
@@ -80,25 +73,19 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testCreate() {
         mockBook()
-        book = given()
-            .config(
-                RestAssuredConfig
-                    .config()
-                    .encoderConfig(
-                        EncoderConfig.encoderConfig()
-                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
-                    )
-            )
-            .spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(book, objectMapper)
+        val content: String = given().spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_JSON)
+            .body(book)
             .`when`()
             .post()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(BookVO::class.java, objectMapper)
+            .asString()
+
+        book = objectMapper.readValue(content, BookVO::class.java)
+
         assertNotNull(book.id)
         assertNotNull(book.title)
         assertNotNull(book.author)
@@ -114,25 +101,20 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testUpdate() {
         book.title = "Docker Deep Dive - Updated"
-        val bookUpdated: BookVO = given()
-            .config(
-                RestAssuredConfig
-                    .config()
-                    .encoderConfig(
-                        EncoderConfig.encoderConfig()
-                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
-                    )
-            )
-            .spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(book, objectMapper)
+
+        val content: String = given().spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_JSON)
+            .body(book)
             .`when`()
             .put()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(BookVO::class.java, objectMapper)
+            .asString()
+
+        val bookUpdated: BookVO = objectMapper.readValue(content, BookVO::class.java)
+
         assertNotNull(bookUpdated.id)
         assertNotNull(bookUpdated.title)
         assertNotNull(bookUpdated.author)
@@ -147,17 +129,8 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     @Order(4)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindById() {
-        val foundBook = given()
-            .config(
-                RestAssuredConfig
-                    .config()
-                    .encoderConfig(
-                        EncoderConfig.encoderConfig()
-                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
-                    )
-            )
-            .spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
+        val content: String = given().spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_JSON)
             .pathParam("id", book.id)
             .`when`()
             .get("{id}")
@@ -165,8 +138,8 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(BookVO::class.java, objectMapper)
-
+            .asString()
+        val foundBook: BookVO = objectMapper.readValue(content, BookVO::class.java)
         assertNotNull(foundBook.id)
         assertNotNull(foundBook.title)
         assertNotNull(foundBook.author)
@@ -180,17 +153,8 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     @Test
     @Order(5)
     fun testDelete() {
-        given()
-            .config(
-                RestAssuredConfig
-                    .config()
-                    .encoderConfig(
-                        EncoderConfig.encoderConfig()
-                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
-                    )
-            )
-            .spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
+        given().spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_JSON)
             .pathParam("id", book.id)
             .`when`()
             .delete("{id}")
@@ -202,17 +166,8 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     @Order(6)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val wrapper = given()
-            .config(
-                RestAssuredConfig
-                    .config()
-                    .encoderConfig(
-                        EncoderConfig.encoderConfig()
-                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
-                    )
-            )
-            .spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
+        val strContent = given().spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_JSON)
             .queryParams(
                 "page", 0,
                 "size", 12,
@@ -223,11 +178,12 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(WrapperBookVO::class.java, objectMapper)
+            .asString()
 
-        val books = wrapper.embedded!!.books
+        val wrapper = objectMapper.readValue(strContent, WrapperBookVO::class.java)
+        val content = wrapper.embedded!!.books
 
-        val foundBookOne = books?.get(0)
+        val foundBookOne = content?.get(0)
 
         assertNotNull(foundBookOne!!.id)
         assertNotNull(foundBookOne.title)
@@ -238,8 +194,9 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
         assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", foundBookOne.author)
         assertEquals(54.00, foundBookOne.price)
 
-        val foundBookFive: BookVO = books[4]
-        assertNotNull(foundBookFive.id)
+        val foundBookFive: BookVO? = content?.get(4)
+
+        assertNotNull(foundBookFive!!.id)
         assertNotNull(foundBookFive.title)
         assertNotNull(foundBookFive.author)
         assertNotNull(foundBookFive.price)
@@ -252,7 +209,7 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     private fun mockBook() {
         book.title = "Docker Deep Dive"
         book.author = "Nigel Poulton"
-        book.price = (java.lang.Double.valueOf(55.99))
+        book.price = 55.99
         book.launchDate = Date()
     }
 }

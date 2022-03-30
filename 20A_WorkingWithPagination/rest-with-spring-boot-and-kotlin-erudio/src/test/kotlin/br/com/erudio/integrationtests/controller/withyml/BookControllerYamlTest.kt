@@ -7,6 +7,7 @@ import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import br.com.erudio.integrationtests.vo.wrappers.WrapperBookVO
+import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
 import io.restassured.RestAssured.given
@@ -212,11 +213,7 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
                     )
             )
             .spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .queryParams(
-                "page", 0,
-                "size", 12,
-                "direction", "asc")
+            .contentType(TestConfigs.CONTENT_TYPE_YML) //.queryParams("page", 0 , "limit", 5, "direction", "asc")
             .`when`()
             .get()
             .then()
@@ -230,6 +227,7 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
         val foundBookOne = books?.get(0)
 
         assertNotNull(foundBookOne!!.id)
+        assertNotNull(foundBookOne.id)
         assertNotNull(foundBookOne.title)
         assertNotNull(foundBookOne.author)
         assertNotNull(foundBookOne.price)
@@ -237,7 +235,6 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
         assertEquals("Big Data: como extrair volume, variedade, velocidade e valor da avalanche de informação cotidiana", foundBookOne.title)
         assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", foundBookOne.author)
         assertEquals(54.00, foundBookOne.price)
-
         val foundBookFive: BookVO = books[4]
         assertNotNull(foundBookFive.id)
         assertNotNull(foundBookFive.title)
