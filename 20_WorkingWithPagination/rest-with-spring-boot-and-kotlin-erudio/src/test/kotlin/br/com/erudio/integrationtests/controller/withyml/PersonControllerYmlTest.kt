@@ -364,7 +364,6 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
 
     }
 
-
     @Test
     @Order(9)
     fun testHATEOAS() {
