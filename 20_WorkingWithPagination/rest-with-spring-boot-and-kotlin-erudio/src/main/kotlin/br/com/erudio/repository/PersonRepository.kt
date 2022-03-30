@@ -14,8 +14,10 @@ interface PersonRepository : JpaRepository<Person, Long?> {
 
     @Modifying
     @Query("UPDATE Person p SET p.enabled = false WHERE p.id =:id")
-    fun disablePersons(@Param("id") id: Long?)
+    fun disablePerson(@Param("id") id: Long?)
 
-    @Query("SELECT p FROM Person p WHERE p.firstName LIKE LOWER(CONCAT ('%', :firstName, '%'))")
-    fun findPersonByName(@Param("firstName") firstName: String, pageable: Pageable): Page<Person>
+    //%and%
+    //LeADNdro, FernADNa, AlessADNra
+    @Query("SELECT p FROM Person p WHERE p.firstName LIKE LOWER(CONCAT ('%',:firstName,'%'))")
+    fun findPersonByName(@Param("firstName") firstName: String, pageable: Pageable) : Page<Person>
 }

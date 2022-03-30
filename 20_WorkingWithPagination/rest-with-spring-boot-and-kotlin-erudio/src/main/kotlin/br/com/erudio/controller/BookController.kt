@@ -64,7 +64,7 @@ class BookController {
     }
 
     @GetMapping(value = ["/{id}"],
-                    produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
+        produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
     @Operation(summary = "Finds a Book", description = "Finds a Book",
         tags = ["Books"],
         responses = [
@@ -97,7 +97,7 @@ class BookController {
     }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML],
-                produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
+        produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
     @Operation(summary = "Adds a new Book", description = "Adds a new Book",
         tags = ["Books"],
         responses = [
@@ -125,7 +125,7 @@ class BookController {
     }
 
     @PutMapping(consumes = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML],
-                    produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
+        produces = [MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML])
     @Operation(summary = "Updates a book's information", description = "Updates a book's information",
         tags = ["Books"],
         responses = [

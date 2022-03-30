@@ -2,8 +2,6 @@ package br.com.erudio.mapper
 
 import com.github.dozermapper.core.DozerBeanMapperBuilder
 import com.github.dozermapper.core.Mapper
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 
 object DozerMapper {
 
@@ -19,10 +17,5 @@ object DozerMapper {
             destinationObjects.add(mapper.map(o, destination))
         }
         return destinationObjects
-    }
-
-    fun <O, D> parsePageOfObjects (origin: Page<O>?, destination: Class<D>?): Page<D> {
-        val list: List<D> = parseListObjects(origin!!.content, destination)
-        return PageImpl(list)
     }
 }

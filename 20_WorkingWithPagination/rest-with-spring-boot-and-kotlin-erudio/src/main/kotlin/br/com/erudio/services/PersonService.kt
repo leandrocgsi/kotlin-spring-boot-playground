@@ -8,20 +8,14 @@ import br.com.erudio.mapper.DozerMapper
 import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PagedResourcesAssembler
-import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.logging.Logger
-
-// https://stackoverflow.com/questions/63439423/how-to-extend-collectionmodel-pagedmodel-in-spring-hateoas
-// https://stackoverflow.com/questions/63087074/pagingandsortingrepository-custom-pageable-response-structure/63087937#63087937
 
 @Service
 class PersonService {
@@ -30,69 +24,28 @@ class PersonService {
     private lateinit var repository: PersonRepository
 
     @Autowired
-    private lateinit var pagedResourcesAssembler: PagedResourcesAssembler<PersonVO>
+    private lateinit var assembler: PagedResourcesAssembler<PersonVO>
 
     private val logger = Logger.getLogger(PersonService::class.java.name)
 
-    fun findAllZ1(pageable: Pageable): Page<PersonVO> {
-        logger.info("Finding all people!")
-        val page = repository.findAll(pageable)
-        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
-        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
-        val findAllLink = linkTo(
-            WebMvcLinkBuilder.methodOn(PersonController::class.java)
-                .findAll(pageable.pageNumber, pageable.pageSize, "asc")
-        ).withSelfRel()
-        //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
-        return vos
-    }
-
-    fun findAllZ2(pageable: Pageable): CollectionModel<PersonVO> {
-        logger.info("Finding all people!")
-        val page = repository.findAll(pageable)
-        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
-        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
-        val findAllLink = linkTo(
-            WebMvcLinkBuilder.methodOn(PersonController::class.java)
-                .findAll(pageable.pageNumber, pageable.pageSize, "asc")
-        ).withSelfRel()
-        //val mypage: Page<PersonVO> = PageImpl(vos.content, pageable, vos.totalElements /*, linkTo(findAllLink)*/)
-        return CollectionModel.of<PersonVO>(vos, findAllLink)
-    }
-
-    // I OWE A BEER -> https://niks36.medium.com/spring-hateoas-part-2-a06a57fbee02
-    fun findAll1(pageable: Pageable): Page<PersonVO> {
-        logger.info("Finding all people!")
-        val page = repository.findAll(pageable)
-        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
-        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
-        return vos
-    }
-
-    // I OWE A BEER -> https://niks36.medium.com/spring-hateoas-part-2-a06a57fbee02
     fun findAll(pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
+
         logger.info("Finding all people!")
-        val page = repository.findAll(pageable)
-        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
-        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
-        val findAllLink = linkTo(
-            WebMvcLinkBuilder.methodOn(PersonController::class.java)
-                .findAll(pageable.pageNumber, pageable.pageSize, "asc")
-        ).withSelfRel()
-        return pagedResourcesAssembler.toModel(vos, findAllLink)
+
+        val persons = repository.findAll(pageable)
+        val vos = persons.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p ->  p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel())}
+        return assembler.toModel(vos)
     }
 
     fun findPersonByName(firstName: String, pageable: Pageable): PagedModel<EntityModel<PersonVO>> {
-        logger.info("Finding one person by name!")
-        val page: Page<Person> = repository.findPersonByName(firstName, pageable)
 
-        var vos = page.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
-        vos.map { p -> p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel()) }
-        val findPersonByNameLink = linkTo(
-            WebMvcLinkBuilder.methodOn(PersonController::class.java)
-                .findPersonByName(firstName, pageable.pageNumber, pageable.pageSize, "asc")!!
-        ).withSelfRel()
-        return pagedResourcesAssembler.toModel(vos, findPersonByNameLink)
+        logger.info("Finding all people!")
+
+        val persons = repository.findPersonByName(firstName, pageable)
+        val vos = persons.map { p -> DozerMapper.parseObject(p, PersonVO::class.java) }
+        vos.map { p ->  p.add(linkTo(PersonController::class.java).slash(p.key).withSelfRel())}
+        return assembler.toModel(vos)
     }
 
     fun findById(id: Long): PersonVO {
@@ -132,13 +85,14 @@ class PersonService {
     }
 
     @Transactional
-    fun disablePerson(id: Long?): PersonVO? {
-        repository.disablePersons(id)
-        val entity = repository.findById(id!!)
-            .orElseThrow<RuntimeException> { ResourceNotFoundException("No records found for this ID") }
-        val personVO: PersonVO? = DozerMapper.parseObject(entity, PersonVO::class.java)
-        val withSelfRel = linkTo(PersonController::class.java).slash(personVO!!.key).withSelfRel()
-        personVO!!.add(withSelfRel)
+    fun disablePerson(id: Long): PersonVO {
+        logger.info("Disabling one person with ID $id!")
+        repository.disablePerson(id)
+        var person = repository.findById(id)
+            .orElseThrow { ResourceNotFoundException("No records found for this ID!") }
+        val personVO: PersonVO = DozerMapper.parseObject(person, PersonVO::class.java)
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO.key).withSelfRel()
+        personVO.add(withSelfRel)
         return personVO
     }
 

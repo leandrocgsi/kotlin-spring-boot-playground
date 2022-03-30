@@ -1,18 +1,21 @@
 package br.com.erudio.services
 
 import br.com.erudio.controller.BookController
+import br.com.erudio.controller.PersonController
 import br.com.erudio.data.vo.v1.BookVO
+import br.com.erudio.data.vo.v1.PersonVO
 import br.com.erudio.exceptions.RequiredObjectIsNullException
 import br.com.erudio.exceptions.ResourceNotFoundException
 import br.com.erudio.mapper.DozerMapper
 import br.com.erudio.model.Book
+import br.com.erudio.model.Person
 import br.com.erudio.repository.BookRepository
+import br.com.erudio.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
 import java.util.logging.Logger
@@ -24,20 +27,16 @@ class BookService {
     private lateinit var repository: BookRepository
 
     @Autowired
-    private lateinit var pagedResourcesAssembler: PagedResourcesAssembler<BookVO>
-    
+    private lateinit var assembler: PagedResourcesAssembler<BookVO>
+
     private val logger = Logger.getLogger(BookService::class.java.name)
 
     fun findAll(pageable: Pageable): PagedModel<EntityModel<BookVO>> {
-        logger.info("Finding all people!")
+        logger.info("Finding all books!")
         val page = repository.findAll(pageable)
-        var vos = page.map { p -> DozerMapper.parseObject(p, BookVO::class.java) }
+        val vos = page.map { b -> DozerMapper.parseObject(b, BookVO::class.java) }
         vos.map { p -> p.add(linkTo(BookController::class.java).slash(p.key).withSelfRel()) }
-        val findAllLink = linkTo(
-            WebMvcLinkBuilder.methodOn(BookController::class.java)
-                .findAll(pageable.pageNumber, pageable.pageSize, "asc")
-        ).withSelfRel()
-        return pagedResourcesAssembler.toModel(vos, findAllLink)
+        return assembler.toModel(vos)
     }
 
     fun findById(id: Long): BookVO {

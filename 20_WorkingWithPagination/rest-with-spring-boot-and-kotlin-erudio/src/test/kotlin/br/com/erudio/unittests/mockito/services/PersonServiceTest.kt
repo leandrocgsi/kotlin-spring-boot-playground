@@ -1,8 +1,6 @@
 package br.com.erudio.unittests.mockito.services
 
-import br.com.erudio.data.vo.v1.PersonVO
 import br.com.erudio.exceptions.RequiredObjectIsNullException
-import br.com.erudio.model.Person
 import br.com.erudio.repository.PersonRepository
 import br.com.erudio.services.PersonService
 import br.com.erudio.unittests.mocks.MockPerson
@@ -15,14 +13,12 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.data.domain.*
 import java.util.*
-import java.util.stream.Collectors
 
 @ExtendWith(MockitoExtension::class)
 internal class PersonServiceTest {
 
-    private lateinit var input: MockPerson
+    private lateinit var inputObject: MockPerson
 
     @InjectMocks
     private lateinit var service: PersonService
@@ -32,22 +28,17 @@ internal class PersonServiceTest {
 
     @BeforeEach
     fun setUpMock() {
-        input = MockPerson()
+        inputObject = MockPerson()
         MockitoAnnotations.openMocks(this)
     }
 
     /*
     @Test
-    fun testFindAll() {
-        val list: List<Person> = input.mockEntityList()
-        val page: Page<Person> = PageImpl(list)
+    fun findAll() {
+        val list = inputObject.mockEntityList()
+        `when`(repository.findAll()).thenReturn(list)
 
-        val pageable: Pageable = PageRequest.of(0, 12, Sort.by(Sort.Direction.ASC, "firstName"))
-
-        `when`(repository.findAll(pageable)).thenReturn(page)
-        val searchPage = service.findAll(pageable).content
-
-        val persons: List<PersonVO> = searchPage.stream().collect(Collectors.toList<PersonVO>()) as List<PersonVO>
+        val persons = service.findAll()
 
         assertNotNull(persons)
         assertEquals(14, persons.size)
@@ -89,7 +80,7 @@ internal class PersonServiceTest {
 
     @Test
     fun findById() {
-        val person = input.mockEntity(1)
+        val person = inputObject.mockEntity(1)
         person.id = 1
         `when`(repository.findById(1)).thenReturn(Optional.of(person))
 
@@ -107,14 +98,14 @@ internal class PersonServiceTest {
 
     @Test
     fun create() {
-        val entity = input.mockEntity(1)
+        val entity = inputObject.mockEntity(1)
 
         val persisted = entity.copy()
         persisted.id = 1
 
         `when`(repository.save(entity)).thenReturn(persisted)
 
-        val vo = input.mockVO(1)
+        val vo = inputObject.mockVO(1)
         val result = service.create(vo)
 
         assertNotNull(result)
@@ -140,7 +131,7 @@ internal class PersonServiceTest {
 
     @Test
     fun update() {
-        val entity = input.mockEntity(1)
+        val entity = inputObject.mockEntity(1)
 
         val persisted = entity.copy()
         persisted.id = 1
@@ -148,7 +139,7 @@ internal class PersonServiceTest {
         `when`(repository.findById(1)).thenReturn(Optional.of(entity))
         `when`(repository.save(entity)).thenReturn(persisted)
 
-        val vo = input.mockVO(1)
+        val vo = inputObject.mockVO(1)
         val result = service.update(vo)
 
         assertNotNull(result)
@@ -174,7 +165,7 @@ internal class PersonServiceTest {
 
     @Test
     fun delete() {
-        val entity = input.mockEntity(1)
+        val entity = inputObject.mockEntity(1)
         `when`(repository.findById(1)).thenReturn(Optional.of(entity))
         service.delete(1)
     }
