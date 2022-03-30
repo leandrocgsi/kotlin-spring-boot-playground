@@ -6,6 +6,7 @@ import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.PersonVO
 import br.com.erudio.integrationtests.vo.TokenVO
+import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonMappingException
 import io.restassured.RestAssured.given
@@ -259,10 +260,11 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
             .statusCode(200)
             .extract()
             .body()
-            .`as`(Array<PersonVO>::class.java, objectMapper)
+            .`as`(WrapperPersonVO::class.java, objectMapper)
 
-        val item1 = content[0]
-        assertNotNull(item1.id)
+        val people = content.embedded!!.persons
+        val item1 = people?.get(0)
+        assertNotNull(item1!!.id)
         assertNotNull(item1.firstName)
         assertNotNull(item1.lastName)
         assertNotNull(item1.address)
@@ -274,7 +276,7 @@ class PersonControllerYmlTest : AbstractIntegrationTest() {
         assertEquals("Male", item1.gender)
         assertEquals(true, item1.enabled)
 
-        val item2 = content[6]
+        val item2 = people[6]
         assertNotNull(item2.id)
         assertNotNull(item2.firstName)
         assertNotNull(item2.lastName)

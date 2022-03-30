@@ -5,6 +5,7 @@ import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.PersonVO
 import br.com.erudio.integrationtests.vo.TokenVO
+import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonMappingException
@@ -197,7 +198,7 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
     @Test
     @Order(7)
     fun testFindAll() {
-        val strContent = given().spec(specification)
+        val content = given().spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
             .`when`()
             .get()
@@ -207,10 +208,11 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
             .body()
             .asString()
 
-        val content = objectMapper.readValue(strContent, Array<PersonVO>::class.java)
+        val wrapper = objectMapper.readValue(content, WrapperPersonVO::class.java)
+        val people = wrapper.embedded!!.persons
 
-        val item1 = content[0]
-        assertNotNull(item1.id)
+        val item1 = people?.get(0)
+        assertNotNull(item1!!.id)
         assertNotNull(item1.firstName)
         assertNotNull(item1.lastName)
         assertNotNull(item1.address)
@@ -222,7 +224,7 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
         assertEquals("Male", item1.gender)
         assertEquals(true, item1.enabled)
 
-        val item2 = content[6]
+        val item2 = people[6]
         assertNotNull(item2.id)
         assertNotNull(item2.firstName)
         assertNotNull(item2.lastName)
