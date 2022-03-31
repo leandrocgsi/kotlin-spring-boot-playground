@@ -25,11 +25,11 @@ jobs:
           cache: maven  
       
       - name: Build REST with Spring Boot Erudio Jar
-        working-directory: ./21_DockerizingOurApp/rest-with-spring-boot-and-kotlin-erudio
+        working-directory: ./22_DockerizingOurApp/rest-with-spring-boot-and-kotlin-erudio
         run: mvn clean package
 
       - name: Docker Build
-        working-directory: ./21_DockerizingOurApp/rest-with-spring-boot-and-kotlin-erudio
+        working-directory: ./22_DockerizingOurApp/rest-with-spring-boot-and-kotlin-erudio
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/rest-with-springboot-and-kotlin-erudio:${{github.run_id}} .
 
       - name: Push to Docker Hub Container Registry
