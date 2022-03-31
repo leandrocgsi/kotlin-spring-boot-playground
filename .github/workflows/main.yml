@@ -24,20 +24,20 @@ jobs:
           distribution: 'adopt'
           cache: maven  
       
-      - name: Build REST with Spring Boot Erudio Jar
+      - name: Build Application Jar
         working-directory: ./22_DockerizingOurApp/rest-with-spring-boot-and-kotlin-erudio
         run: mvn clean package
 
-      - name: Docker Build
-        working-directory: ./22_DockerizingOurApp/rest-with-spring-boot-and-kotlin-erudio
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/rest-with-springboot-and-kotlin-erudio:${{github.run_id}} .
+      - name: Docker Compose Build
+        working-directory: ./22_DockerizingOurApp
+        run: docker compose build
 
       - name: Push to Docker Hub Container Registry
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/rest-with-springboot-and-kotlin-erudio:${{github.run_id}} ${{ secrets.DOCKER_USERNAME }}/rest-with-springboot-and-kotlin-erudio:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/rest-with-spring-boot-erudio:${{github.run_id}} ${{ secrets.DOCKER_USERNAME }}/rest-with-spring-boot-erudio:latest
 
-          docker push ${{ secrets.DOCKER_USERNAME }}/rest-with-springboot-and-kotlin-erudio:${{github.run_id}}
-          docker push ${{ secrets.DOCKER_USERNAME }}/rest-with-springboot-and-kotlin-erudio:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/rest-with-spring-boot-erudio:${{github.run_id}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/rest-with-spring-boot-erudio:latest
       
       #- name: Show current folder
         #run: pwd
