@@ -4,5 +4,5 @@ class UploadFileResponseVO (
     var fileName: String = "",
     var fileDownloadUri: String = "",
     var fileType: String = "",
-    var size: Long = 0
+    var fileSize: Long = 0
 )

@@ -20,8 +20,7 @@ class FileStorageService @Autowired constructor(fileStorageConfig: FileStorageCo
     private val fileStorageLocation: Path
 
     init {
-        fileStorageLocation = Paths.get(fileStorageConfig.uploadDir)
-            .toAbsolutePath().normalize()
+        fileStorageLocation = Paths.get(fileStorageConfig.uploadDir).toAbsolutePath().normalize()
         try {
             Files.createDirectories(fileStorageLocation)
         } catch (e: Exception) {
@@ -32,7 +31,9 @@ class FileStorageService @Autowired constructor(fileStorageConfig: FileStorageCo
     fun storeFile(file: MultipartFile): String {
         val fileName = StringUtils.cleanPath(file.originalFilename!!)
         return try {
-            if (fileName.contains("..")) throw FileStorageException("Sorry! Filename contains invalid path sequence $fileName")
+            // my_file..txt
+            if (fileName.contains(".."))
+                throw FileStorageException("Sorry! Filename contains invalid path sequence $fileName")
             val targetLocation = fileStorageLocation.resolve(fileName)
             Files.copy(file.inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING)
             fileName
@@ -46,9 +47,9 @@ class FileStorageService @Autowired constructor(fileStorageConfig: FileStorageCo
             val filePath = fileStorageLocation.resolve(fileName).normalize()
             val resource: Resource = UrlResource(filePath.toUri())
             if (resource.exists()) resource
-            else throw MyFileNotFoundException("File not found $fileName")
+            else throw MyFileNotFoundException("File not found $fileName!")
         } catch (e: Exception) {
-            throw MyFileNotFoundException("File not found $fileName", e)
+            throw MyFileNotFoundException("File not found $fileName!", e)
         }
     }
 }

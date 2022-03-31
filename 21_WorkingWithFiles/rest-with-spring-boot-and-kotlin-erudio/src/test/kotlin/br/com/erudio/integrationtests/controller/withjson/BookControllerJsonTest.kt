@@ -194,7 +194,7 @@ class  BookControllerJsonTest : AbstractIntegrationTest() {
         assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", foundBookOne.author)
         assertEquals(54.00, foundBookOne.price)
 
-        val foundBookFive: BookVO = content[4]
+        val foundBookFive: BookVO? = content?.get(4)
 
         assertNotNull(foundBookFive!!.id)
         assertNotNull(foundBookFive.title)

@@ -54,7 +54,7 @@ class JwtTokenProvider {
     }
 
     fun refreshToken(refreshToken: String) : TokenVO {
-        var token = ""
+        var token: String = ""
         if(refreshToken.contains("Bearer ")) token = refreshToken.substring("Bearer ".length)
         val verifier: JWTVerifier = JWT.require(algorithm).build()
         var decodedJWT: DecodedJWT = verifier.verify(token)

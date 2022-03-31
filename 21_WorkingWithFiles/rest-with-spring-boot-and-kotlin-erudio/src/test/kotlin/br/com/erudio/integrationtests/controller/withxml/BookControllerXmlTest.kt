@@ -159,6 +159,7 @@ class BookControllerXmlTest : AbstractIntegrationTest() {
 
     @Test
     @Order(6)
+    @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
         val strContent = given().spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_XML)

@@ -200,6 +200,7 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
 
     @Test
     @Order(6)
+    @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
         val wrapper = given()
             .config(
@@ -287,7 +288,7 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
     private fun mockBook() {
         book.title = "Docker Deep Dive"
         book.author = "Nigel Poulton"
-        book.price = (java.lang.Double.valueOf(55.99))
+        book.price = 55.99
         book.launchDate = Date()
     }
 }
