@@ -3,7 +3,7 @@
 [![Continuous Integration with Github Actions](https://github.com/leandrocgsi/kotlin-spring-boot-playground/actions/workflows/main.yml/badge.svg)](https://github.com/leandrocgsi/kotlin-spring-boot-playground/actions/workflows/main.yml)
 [![Docker Hub Repo](https://img.shields.io/docker/pulls/leandrocgsi/rest-with-spring-boot-erudio.svg)](https://hub.docker.com/r/leandrocgsi/rest-with-spring-boot-erudio/)
 
-[![Image](https://raw.githubusercontent.com/leandrocgsi/RestWithSpringBootUdemy/master/Images/rest_kotlin.png?raw=true "REST API's RESTFul do 0 à AWS com Spring Boot, Kotlin e Docker")](https://pub.erudio.com.br/meus-cursos)
+[![Image](https://raw.githubusercontent.com/leandrocgsi/RestWithSpringBootUdemy/master/Images/rest_kotlin.png?raw=true "REST API's RESTFul do 0 à AWS com Spring Boot, Kotlin e Docker")](https://www.udemy.com/course/restful-apis-do-0-a-aws-com-spring-boot-3-kotlin-e-docker/?couponCode=GTHB_FLASH_SALE2021)
 
 # My Courses
 
