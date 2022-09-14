@@ -22,10 +22,10 @@
 		<testcontainers.version>1.16.3</testcontainers.version>
 		<rest-assured.version>4.5.0</rest-assured.version>
 		<java-jwt.version>3.18.3</java-jwt.version>
-		<micrometer.version>1.9.4</micrometer.version>
+		<!--<micrometer.version>1.9.4</micrometer.version>-->
+		<hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
 	</properties>
-	<dependencies>
-		<dependency>
+	<dependencies>		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>8.0.0.Final</version>
+			<version>${hibernate-validator.version}</version>
 		</dependency>
 
 		<dependency>
