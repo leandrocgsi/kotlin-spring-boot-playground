@@ -23,6 +23,7 @@ class PersonMapper {
         val entity = Person()
         entity.id = person.id
         entity.address = person.address
+        // entity.birthDay = person.birthDay
         entity.firstName = person.firstName
         entity.lastName = person.lastName
         entity.gender = person.gender
