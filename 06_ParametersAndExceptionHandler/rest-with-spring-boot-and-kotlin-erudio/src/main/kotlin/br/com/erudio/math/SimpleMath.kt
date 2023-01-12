@@ -4,15 +4,15 @@ import kotlin.math.sqrt
 
 class SimpleMath {
 
-    fun sum(firstNumber: Double, secondNumber: Double) = firstNumber + secondNumber
+    fun sum(numberOne: Double, numberTwo: Double) = numberOne + numberTwo
 
-    fun subtraction(firstNumber: Double, secondNumber: Double) = firstNumber - secondNumber
+    fun subtraction(numberOne: Double, numberTwo: Double) = numberOne - numberTwo
 
-    fun multiplication(firstNumber: Double, secondNumber: Double) = firstNumber * secondNumber
+    fun multiplication(numberOne: Double, numberTwo: Double) = numberOne * numberTwo
 
-    fun division(firstNumber: Double, secondNumber: Double) = firstNumber / secondNumber
+    fun division(numberOne: Double, numberTwo: Double) = numberOne / numberTwo
 
-    fun mean(firstNumber: Double, secondNumber: Double) = (firstNumber + secondNumber) / 2
+    fun mean(numberOne: Double, numberTwo: Double) = (numberOne + numberTwo) / 2
 
-    fun squareRoot(number: Double?) = sqrt(number!!)
+    fun squareRoot(number: Double) = sqrt(number)
 }
