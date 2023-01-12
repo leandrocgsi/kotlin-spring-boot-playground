@@ -1,0 +1,40 @@
+https://stackoverflow.com/questions/19595067/git-add-commit-and-push-commands-in-one
+
+05_FirstStepsInKotlinwithSpringBoot/              -> git acmp 'First Steps in Kotlin 1.8 with Spring Boot 3.0.1'
+06_ParametersAndExceptionHandler/                 -> git acmp 'REST Parameters and Exception Handler'
+07_WorkingWithVerbs/                              -> git acmp 'Working with four HTTP Main Verbs'
+08_ConnectingToMySQL/                             -> git acmp 'Connecting to MySQL with Spring Data, JPA and Hibernate'
+09_WorkingWithVOPattern/                          -> git acmp 'Implementing VO pattern with Dozer'
+10_VersioningEndpoints/                           -> git acmp 'Versioning our API'
+11_MigrationsWithFlyWay/                          -> git acmp 'Adding migrations support with Flyway'
+12_CustomSerialization/                           -> git acmp 'Custom JSON serialization'
+13_ContentNegotiation/                            -> git acmp 'Implementing Content Negotiation with JSON, XML and YAML'
+14_HATEOAS/                                       -> git acmp 'Testing Generation of HATEOAS Links with Mockito'
+15_WorkingWithSwaggerOpenAPI/                     -> git acmp 'Adding Swagger Open API Support'
+16_ConfiguringCORS/                               -> git acmp 'Configuring Cross-Origin Resource Sharing (CORS)'
+17_AuthenticationWithJWT/                         -> git acmp 'Implementing Authentication With Spring Security and JWT'
+18_ShieldingOurAPIWithTests/                      -> git acmp 'Shielding our API with Rest Assured, Testcontainers and JUnit 5'
+19_WorkingWithPATCHMethod/                        -> git acmp 'Working with PATCH Method'
+20_WorkingWithPagination/                         -> git acmp 'Implementing Pagination Search'
+21_WorkingWithFiles/                              -> git acmp 'Implementing Upload and Download Files'
+22_DockerizingOurApp/                             -> git acmp 'Dockerizing our Application'
+23_DeploingOurAppToAWS/                           -> git acmp 'Deploy to Amazon AWS'
+24_ContinuousIntegrationWithAWS/                  -> git acmp 'Continuous Integration with Github, Github Actions, Amazon ECR and ECS'
+25A_MavenArchetypes_OriginalProject/              -> git acmp 'Replacing application.properties to application.yml'
+25B_MavenArchetypes_DestinationProject/           -> git acmp 'Working with Archetypes'
+26A_ConnectingToOtherDatabases_PostgreSQL/        -> git acmp 'Working with Archetypes'
+26B_ConnectingToOtherDatabases_SQL_Server/        -> git acmp 'Working with Archetypes'
+
+0509 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
+0807 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
+0906 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
+1410 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
+1514 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
+1716 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
+1717 [UPDATES] Testando a APP após Upgrade para Kotlin 1.8 e Spring Boot 3.0.1
+
+3007 Como Acessar o Código de Outras Branchs
+
+E:\Dropbox\Udemy Courses\CamtasiaRecords\07_SpringBootJava
+
+kotlin_1.8_spring_boot_3.0.1
