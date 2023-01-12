@@ -8,7 +8,7 @@ import br.com.erudio.mapper.DozerMapper
 import br.com.erudio.model.Person
 import br.com.erudio.unittests.mapper.mocks.MockPerson
 
-class DozerConverterTest {
+class DozerMapperTest {
 
     var inputObject: MockPerson? = null
 

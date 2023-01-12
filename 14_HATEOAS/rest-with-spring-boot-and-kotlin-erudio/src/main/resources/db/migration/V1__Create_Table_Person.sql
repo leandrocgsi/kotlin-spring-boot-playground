@@ -6,5 +6,3 @@ CREATE TABLE IF NOT EXISTS `person` (
   `gender` varchar(6) NOT NULL,
   PRIMARY KEY (`id`)
 )
-
-
