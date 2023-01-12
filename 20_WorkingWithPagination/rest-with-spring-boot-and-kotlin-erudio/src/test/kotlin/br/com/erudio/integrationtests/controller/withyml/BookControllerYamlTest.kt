@@ -200,6 +200,7 @@ class BookControllerYamlTest : AbstractIntegrationTest() {
 
     @Test
     @Order(6)
+    @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
         val wrapper = given()
             .config(
