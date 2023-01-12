@@ -11,16 +11,15 @@ data class Book (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
-    @Column(name = "author", nullable = false, length = 180)
+    @Column(nullable = false, length = 180)
     var author: String = "",
 
     @Column(name = "launch_date")
-    @Temporal(TemporalType.DATE)
     var launchDate: Date? = null,
 
     @Column(nullable = false)
     var price: Double = 0.0,
 
     @Column(nullable = false, length = 250)
-    var title: String = "",
+    var title: String = ""
 )
