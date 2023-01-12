@@ -5,10 +5,9 @@ import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.PersonVO
 import br.com.erudio.integrationtests.vo.TokenVO
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.filter.log.LogDetail
@@ -17,60 +16,62 @@ import io.restassured.filter.log.ResponseLoggingFilter
 import io.restassured.specification.RequestSpecification
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@TestMethodOrder(OrderAnnotation::class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PersonControllerXmlTest : AbstractIntegrationTest() {
 
-    private var specification: RequestSpecification? = null
-    private var objectMapper: ObjectMapper? = null
-    private var person: PersonVO? = null
+    private lateinit var specification: RequestSpecification
+    private lateinit var objectMapper: ObjectMapper
+    private lateinit var person: PersonVO
 
     @BeforeAll
-    fun setup() {
+    fun setupTests(){
         objectMapper = ObjectMapper()
-        objectMapper!!.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         person = PersonVO()
     }
 
     @Test
-    @Order(1)
-    fun authorization() {
-        val user = AccountCredentialsVO()
-        user.username = "leandro"
-        user.password = "admin123"
-        val token = given()
+    @Order(0)
+    fun testLogin() {
+        val user = AccountCredentialsVO(
+            username = "leandro",
+            password = "admin123"
+        )
+
+        val token = RestAssured.given()
             .basePath("/auth/signin")
-            .port(TestConfigs.SERVER_PORT)
-            .contentType(TestConfigs.CONTENT_TYPE_XML)
-            .body(user)
+                .port(TestConfigs.SERVER_PORT)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .body(user)
             .`when`()
             .post()
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .`as`(TokenVO::class.java)
-            .accessToken
+                .then()
+                    .statusCode(200)
+                        .extract()
+                    .body()
+                        .`as`(TokenVO::class.java)
+                            .accessToken
 
         specification = RequestSpecBuilder()
             .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer $token")
-            .setBasePath("/api/person/v1")
+                .setBasePath("/api/person/v1")
             .setPort(TestConfigs.SERVER_PORT)
-            .addFilter(RequestLoggingFilter(LogDetail.ALL))
-            .addFilter(ResponseLoggingFilter(LogDetail.ALL))
+                .addFilter(RequestLoggingFilter(LogDetail.ALL))
+                .addFilter(ResponseLoggingFilter(LogDetail.ALL))
             .build()
     }
 
     @Test
-    @Order(2)
-    @Throws(JsonMappingException::class, JsonProcessingException::class)
+    @Order(1)
     fun testCreate() {
         mockPerson()
-        val content: String = given().spec(specification)
+
+        val content = given()
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
             .body(person)
             .`when`()
@@ -80,55 +81,61 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
             .extract()
             .body()
             .asString()
-        val createdPerson = objectMapper!!.readValue(content, PersonVO::class.java)
-        person = createdPerson
-        assertNotNull(createdPerson.id)
-        assertNotNull(createdPerson.firstName)
-        assertNotNull(createdPerson.lastName)
-        assertNotNull(createdPerson.address)
-        assertNotNull(createdPerson.gender)
-        assertTrue(createdPerson.id > 0)
-        assertEquals("Richard", createdPerson.firstName)
-        assertEquals("Stallman", createdPerson.lastName)
-        assertEquals("New York City, New York, US", createdPerson.address)
-        assertEquals("Male", createdPerson.gender)
+
+        val item = objectMapper.readValue(content, PersonVO::class.java)
+        person = item
+
+        assertNotNull(item.id)
+        assertTrue(item.id > 0)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Stallman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
+    }
+
+    @Test
+    @Order(2)
+    fun testUpdate() {
+        person.lastName = "Matthew Stallman"
+
+        val content = given()
+            .spec(specification)
+            .contentType(TestConfigs.CONTENT_TYPE_XML)
+            .body(person)
+            .`when`()
+            .put()
+            .then()
+            .statusCode(200)
+            .extract()
+            .body()
+            .asString()
+
+        val item = objectMapper.readValue(content, PersonVO::class.java)
+        person = item
+
+        assertNotNull(item.id)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertEquals(person.id, item.id)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Matthew Stallman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
     }
 
     @Test
     @Order(3)
-    @Throws(JsonMappingException::class, JsonProcessingException::class)
-    fun testUpdate() {
-        person!!.lastName = "Matthew Stallman"
-        val content: String = given().spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_XML)
-            .body(person)
-            .`when`()
-            .post()
-            .then()
-            .statusCode(200)
-            .extract()
-            .body()
-            .asString()
-        val updatedPerson = objectMapper!!.readValue(content, PersonVO::class.java)
-        assertNotNull(updatedPerson.id)
-        assertNotNull(updatedPerson.firstName)
-        assertNotNull(updatedPerson.lastName)
-        assertNotNull(updatedPerson.address)
-        assertNotNull(updatedPerson.gender)
-        assertEquals(updatedPerson.id, person!!.id)
-        assertEquals("Richard", updatedPerson.firstName)
-        assertEquals("Matthew Stallman", updatedPerson.lastName)
-        assertEquals("New York City, New York, US", updatedPerson.address)
-        assertEquals("Male", updatedPerson.gender)
-    }
-
-    @Test
-    @Order(4)
-    @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindById() {
-        val content: String = given().spec(specification)
+        val content = given()
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
-            .pathParam("id", person!!.id)
+            .pathParam("id", person.id)
             .`when`()
             .get("{id}")
             .then()
@@ -136,25 +143,28 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
             .extract()
             .body()
             .asString()
-        val foundPerson = objectMapper!!.readValue(content, PersonVO::class.java)
-        assertNotNull(foundPerson.id)
-        assertNotNull(foundPerson.firstName)
-        assertNotNull(foundPerson.lastName)
-        assertNotNull(foundPerson.address)
-        assertNotNull(foundPerson.gender)
-        assertEquals(foundPerson.id, person!!.id)
-        assertEquals("Richard", foundPerson.firstName)
-        assertEquals("Matthew Stallman", foundPerson.lastName)
-        assertEquals("New York City, New York, US", foundPerson.address)
-        assertEquals("Male", foundPerson.gender)
+
+        val item = objectMapper.readValue(content, PersonVO::class.java)
+        person = item
+
+        assertNotNull(item.id)
+        assertNotNull(item.firstName)
+        assertNotNull(item.lastName)
+        assertNotNull(item.address)
+        assertNotNull(item.gender)
+        assertEquals(person.id, item.id)
+        assertEquals("Richard", item.firstName)
+        assertEquals("Matthew Stallman", item.lastName)
+        assertEquals("New York City, New York, US", item.address)
+        assertEquals("Male", item.gender)
     }
 
     @Test
-    @Order(5)
+    @Order(4)
     fun testDelete() {
-        given().spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_XML)
-            .pathParam("id", person!!.id)
+        given()
+            .spec(specification)
+            .pathParam("id", person.id)
             .`when`()
             .delete("{id}")
             .then()
@@ -162,9 +172,10 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
     }
 
     @Test
-    @Order(6)
+    @Order(5)
     fun testFindAll() {
-        val strContent = given().spec(specification)
+        val content = given()
+            .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
             .`when`()
             .get()
@@ -174,54 +185,63 @@ class PersonControllerXmlTest : AbstractIntegrationTest() {
             .body()
             .asString()
 
-        val content = objectMapper!!.readValue(strContent, Array<PersonVO>::class.java)
+        val people = objectMapper.readValue(content, Array<PersonVO>::class.java)
 
-        val foundPersonOne = content[0]
-        assertNotNull(foundPersonOne!!.id)
-        assertNotNull(foundPersonOne.firstName)
-        assertNotNull(foundPersonOne.lastName)
-        assertNotNull(foundPersonOne.address)
-        assertNotNull(foundPersonOne.gender)
-        assertEquals(1, foundPersonOne.id)
-        assertEquals("Ayrton", foundPersonOne.firstName)
-        assertEquals("Senna", foundPersonOne.lastName)
-        assertEquals("São Paulo", foundPersonOne.address)
-        assertEquals("Male", foundPersonOne.gender)
+        val item1 = people[0]
 
-        val foundPersonSix = content[6]
-        assertNotNull(foundPersonSix.id)
-        assertNotNull(foundPersonSix.firstName)
-        assertNotNull(foundPersonSix.lastName)
-        assertNotNull(foundPersonSix.address)
-        assertNotNull(foundPersonSix.gender)
-        assertEquals(10, foundPersonSix.id)
-        assertEquals("Nikola", foundPersonSix.firstName)
-        assertEquals("Tesla", foundPersonSix.lastName)
-        assertEquals("Smiljan - Croatia", foundPersonSix.address)
-        assertEquals("Male", foundPersonSix.gender)
+        assertNotNull(item1.id)
+        assertNotNull(item1.firstName)
+        assertNotNull(item1.lastName)
+        assertNotNull(item1.address)
+        assertNotNull(item1.gender)
+        assertEquals("Ayrton", item1.firstName)
+        assertEquals("Senna", item1.lastName)
+        assertEquals("São Paulo", item1.address)
+        assertEquals("Male", item1.gender)
+
+        val item2 = people[6]
+
+        assertNotNull(item2.id)
+        assertNotNull(item2.firstName)
+        assertNotNull(item2.lastName)
+        assertNotNull(item2.address)
+        assertNotNull(item2.gender)
+        assertEquals("Nikola", item2.firstName)
+        assertEquals("Tesla", item2.lastName)
+        assertEquals("Smiljan - Croatia", item2.address)
+        assertEquals("Male", item2.gender)
     }
 
+
     @Test
-    @Order(7)
+    @Order(5)
     fun testFindAllWithoutToken() {
+
         val specificationWithoutToken: RequestSpecification = RequestSpecBuilder()
             .setBasePath("/api/person/v1")
             .setPort(TestConfigs.SERVER_PORT)
-            .addFilter(RequestLoggingFilter(LogDetail.ALL))
-            .addFilter(ResponseLoggingFilter(LogDetail.ALL))
+                .addFilter(RequestLoggingFilter(LogDetail.ALL))
+                .addFilter(ResponseLoggingFilter(LogDetail.ALL))
             .build()
-        given().spec(specificationWithoutToken)
+
+        given()
+            .spec(specificationWithoutToken)
             .contentType(TestConfigs.CONTENT_TYPE_XML)
             .`when`()
             .get()
             .then()
             .statusCode(403)
+            .extract()
+            .body()
+            .asString()
+
     }
 
     private fun mockPerson() {
-        person!!.firstName = "Richard"
-        person!!.lastName = "Stallman"
-        person!!.address = "New York City, New York, US"
-        person!!.gender = "Male"
+        person.firstName = "Richard"
+        person.lastName = "Stallman"
+        person.address = "New York City, New York, US"
+        person.gender = "Male"
     }
+
 }

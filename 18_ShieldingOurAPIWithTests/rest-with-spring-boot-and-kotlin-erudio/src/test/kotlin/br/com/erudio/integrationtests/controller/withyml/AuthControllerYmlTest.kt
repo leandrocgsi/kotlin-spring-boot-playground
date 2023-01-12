@@ -1,10 +1,14 @@
-package br.com.erudio.integrationtests.controller.withjson
+package br.com.erudio.integrationtests.controller.withyml
 
 import br.com.erudio.integrationtests.TestConfigs
+import br.com.erudio.integrationtests.controller.withyml.mapper.YMLMapper
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import io.restassured.RestAssured
+import io.restassured.config.EncoderConfig
+import io.restassured.config.RestAssuredConfig
+import io.restassured.http.ContentType
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,13 +16,15 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AuthControllerJsonTest : AbstractIntegrationTest(){
+class AuthControllerYmlTest : AbstractIntegrationTest(){
 
+    private lateinit var objectMapper: YMLMapper
     private lateinit var tokenVO: TokenVO
 
     @BeforeAll
     fun setupTests(){
         tokenVO = TokenVO()
+        objectMapper = YMLMapper()
     }
 
     @Test
@@ -30,17 +36,26 @@ class AuthControllerJsonTest : AbstractIntegrationTest(){
         )
 
         tokenVO = RestAssured.given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
             .basePath("/auth/signin")
                 .port(TestConfigs.SERVER_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .body(user)
+                .accept(TestConfigs.CONTENT_TYPE_YML)
+                .contentType(TestConfigs.CONTENT_TYPE_YML)
+                .body(user, objectMapper)
             .`when`()
                 .post()
                     .then()
                         .statusCode(200)
                         .extract()
                         .body()
-                        .`as`(TokenVO::class.java)
+                        .`as`(TokenVO::class.java, objectMapper)
 
         assertNotNull(tokenVO.accessToken)
         assertNotNull(tokenVO.refreshToken)
@@ -51,9 +66,18 @@ class AuthControllerJsonTest : AbstractIntegrationTest(){
     fun testRefreshToken() {
 
         tokenVO = RestAssured.given()
+            .config(
+                RestAssuredConfig
+                    .config()
+                    .encoderConfig(
+                        EncoderConfig.encoderConfig()
+                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
+                    )
+            )
             .basePath("/auth/refresh")
                 .port(TestConfigs.SERVER_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .accept(TestConfigs.CONTENT_TYPE_YML)
+                .contentType(TestConfigs.CONTENT_TYPE_YML)
                 .pathParam("username", tokenVO.username)
                 .header(
                     TestConfigs.HEADER_PARAM_AUTHORIZATION,
@@ -64,7 +88,7 @@ class AuthControllerJsonTest : AbstractIntegrationTest(){
                         .statusCode(200)
                         .extract()
                         .body()
-                        .`as`(TokenVO::class.java)
+                        .`as`(TokenVO::class.java, objectMapper)
 
         assertNotNull(tokenVO.accessToken)
         assertNotNull(tokenVO.refreshToken)

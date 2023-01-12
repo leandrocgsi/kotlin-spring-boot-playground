@@ -1,15 +1,13 @@
-package br.com.erudio.integrationtests.controller.withyaml
+package br.com.erudio.integrationtests.controller.withyml
 
 import br.com.erudio.integrationtests.TestConfigs
-import br.com.erudio.integrationtests.controller.withyaml.mapper.YMLMapper
+import br.com.erudio.integrationtests.controller.withyml.mapper.YMLMapper
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO
-import br.com.erudio.integrationtests.vo.PersonVO
+import br.com.erudio.integrationtests.vo.BookVO
 import br.com.erudio.integrationtests.vo.TokenVO
 import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.config.EncoderConfig
@@ -23,30 +21,29 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
 import org.springframework.boot.test.context.SpringBootTest
+import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PersonControllerYamlTest : AbstractIntegrationTest() {
+class BookControllerYamlTest : AbstractIntegrationTest() {
 
     private lateinit var specification: RequestSpecification
     private lateinit var objectMapper: YMLMapper
-    private lateinit var person: PersonVO
+    private lateinit var book: BookVO
 
     @BeforeAll
     fun setup() {
         objectMapper = YMLMapper()
-        person = PersonVO()
+        book = BookVO()
     }
 
     @Test
     @Order(1)
     fun authorization() {
         val user = AccountCredentialsVO()
-
         user.username = "leandro"
         user.password = "admin123"
-
         val token = given()
             .config(
                 RestAssuredConfig
@@ -68,10 +65,9 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             .body()
             .`as`(TokenVO::class.java, objectMapper)
             .accessToken
-
         specification = RequestSpecBuilder()
             .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer $token")
-            .setBasePath("/api/person/v1")
+            .setBasePath("/api/book/v1")
             .setPort(TestConfigs.SERVER_PORT)
             .addFilter(RequestLoggingFilter(LogDetail.ALL))
             .addFilter(ResponseLoggingFilter(LogDetail.ALL))
@@ -82,8 +78,8 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
     @Order(2)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testCreate() {
-        mockPerson()
-        val createdPerson = given()
+        mockBook()
+        book = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -94,35 +90,30 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             )
             .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(person, objectMapper)
+            .body(book, objectMapper)
             .`when`()
             .post()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(PersonVO::class.java, objectMapper)
-
-        person = createdPerson
-        assertNotNull(createdPerson.id)
-        assertNotNull(createdPerson.firstName)
-        assertNotNull(createdPerson.lastName)
-        assertNotNull(createdPerson.address)
-        assertNotNull(createdPerson.gender)
-        assertTrue(createdPerson.id > 0)
-        assertEquals("Richard", createdPerson.firstName)
-        assertEquals("Stallman", createdPerson.lastName)
-        assertEquals("New York City, New York, US", createdPerson.address)
-        assertEquals("Male", createdPerson.gender)
+            .`as`(BookVO::class.java, objectMapper)
+        assertNotNull(book.id)
+        assertNotNull(book.title)
+        assertNotNull(book.author)
+        assertNotNull(book.price)
+        assertTrue(book.id > 0)
+        assertEquals("Docker Deep Dive", book.title)
+        assertEquals("Nigel Poulton", book.author)
+        assertEquals(55.99, book.price)
     }
 
     @Test
     @Order(3)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testUpdate() {
-        person.lastName = "Matthew Stallman"
-
-        val updatedPerson = given()
+        book.title = "Docker Deep Dive - Updated"
+        val bookUpdated: BookVO = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -133,32 +124,29 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             )
             .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .body(person, objectMapper)
+            .body(book, objectMapper)
             .`when`()
-            .post()
+            .put()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(PersonVO::class.java, objectMapper)
-
-        assertNotNull(updatedPerson.id)
-        assertNotNull(updatedPerson.firstName)
-        assertNotNull(updatedPerson.lastName)
-        assertNotNull(updatedPerson.address)
-        assertNotNull(updatedPerson.gender)
-        assertEquals(updatedPerson.id, person!!.id)
-        assertEquals("Richard", updatedPerson.firstName)
-        assertEquals("Matthew Stallman", updatedPerson.lastName)
-        assertEquals("New York City, New York, US", updatedPerson.address)
-        assertEquals("Male", updatedPerson.gender)
+            .`as`(BookVO::class.java, objectMapper)
+        assertNotNull(bookUpdated.id)
+        assertNotNull(bookUpdated.title)
+        assertNotNull(bookUpdated.author)
+        assertNotNull(bookUpdated.price)
+        assertEquals(bookUpdated.id, book.id)
+        assertEquals("Docker Deep Dive - Updated", bookUpdated.title)
+        assertEquals("Nigel Poulton", bookUpdated.author)
+        assertEquals(55.99, bookUpdated.price)
     }
 
     @Test
     @Order(4)
     @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindById() {
-        val foundPerson = given()
+        val foundBook = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -169,25 +157,23 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             )
             .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .pathParam("id", person!!.id)
+            .pathParam("id", book.id)
             .`when`()
             .get("{id}")
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(PersonVO::class.java, objectMapper)
+            .`as`(BookVO::class.java, objectMapper)
 
-        assertNotNull(foundPerson.id)
-        assertNotNull(foundPerson.firstName)
-        assertNotNull(foundPerson.lastName)
-        assertNotNull(foundPerson.address)
-        assertNotNull(foundPerson.gender)
-        assertEquals(foundPerson.id, person!!.id)
-        assertEquals("Richard", foundPerson.firstName)
-        assertEquals("Matthew Stallman", foundPerson.lastName)
-        assertEquals("New York City, New York, US", foundPerson.address)
-        assertEquals("Male", foundPerson.gender)
+        assertNotNull(foundBook.id)
+        assertNotNull(foundBook.title)
+        assertNotNull(foundBook.author)
+        assertNotNull(foundBook.price)
+        assertEquals(foundBook.id, book.id)
+        assertEquals("Docker Deep Dive - Updated", foundBook.title)
+        assertEquals("Nigel Poulton", foundBook.author)
+        assertEquals(55.99, foundBook.price)
     }
 
     @Test
@@ -204,7 +190,7 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
             )
             .spec(specification)
             .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .pathParam("id", person.id)
+            .pathParam("id", book.id)
             .`when`()
             .delete("{id}")
             .then()
@@ -213,8 +199,9 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
 
     @Test
     @Order(6)
+    @Throws(JsonMappingException::class, JsonProcessingException::class)
     fun testFindAll() {
-        val response: Array<PersonVO> = given()
+        val response = given()
             .config(
                 RestAssuredConfig
                     .config()
@@ -224,72 +211,40 @@ class PersonControllerYamlTest : AbstractIntegrationTest() {
                     )
             )
             .spec(specification)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
+            .contentType(TestConfigs.CONTENT_TYPE_YML) //.queryParams("page", 0 , "limit", 5, "direction", "asc")
             .`when`()
             .get()
             .then()
             .statusCode(200)
             .extract()
             .body()
-            .`as`(Array<PersonVO>::class.java, objectMapper)
+            .`as`(Array<BookVO>::class.java, objectMapper)
 
-        val people = listOf(*response)
-
-        val foundPersonOne = people[0]
-        assertNotNull(foundPersonOne.id)
-        assertNotNull(foundPersonOne.firstName)
-        assertNotNull(foundPersonOne.lastName)
-        assertNotNull(foundPersonOne.address)
-        assertNotNull(foundPersonOne.gender)
-        assertEquals(1, foundPersonOne.id)
-        assertEquals("Ayrton", foundPersonOne.firstName)
-        assertEquals("Senna", foundPersonOne.lastName)
-        assertEquals("São Paulo", foundPersonOne.address)
-        assertEquals("Male", foundPersonOne.gender)
-
-        val foundPersonSix = people[6]
-        assertNotNull(foundPersonSix.id)
-        assertNotNull(foundPersonSix.firstName)
-        assertNotNull(foundPersonSix.lastName)
-        assertNotNull(foundPersonSix.address)
-        assertNotNull(foundPersonSix.gender)
-        assertEquals(10, foundPersonSix.id)
-        assertEquals("Nikola", foundPersonSix.firstName)
-        assertEquals("Tesla", foundPersonSix.lastName)
-        assertEquals("Smiljan - Croatia", foundPersonSix.address)
-        assertEquals("Male", foundPersonSix.gender)
+        val content: MutableList<BookVO> = Arrays.asList(*response)
+        val foundBookOne: BookVO = content[0]
+        assertNotNull(foundBookOne.id)
+        assertNotNull(foundBookOne.title)
+        assertNotNull(foundBookOne.author)
+        assertNotNull(foundBookOne.price)
+        assertTrue(foundBookOne.id > 0)
+        assertEquals("Working effectively with legacy code", foundBookOne.title)
+        assertEquals("Michael C. Feathers", foundBookOne.author)
+        assertEquals(49.00, foundBookOne.price)
+        val foundBookFive: BookVO = content[4]
+        assertNotNull(foundBookFive.id)
+        assertNotNull(foundBookFive.title)
+        assertNotNull(foundBookFive.author)
+        assertNotNull(foundBookFive.price)
+        assertTrue(foundBookFive.id > 0)
+        assertEquals("Code complete", foundBookFive.title)
+        assertEquals("Steve McConnell", foundBookFive.author)
+        assertEquals(58.0, foundBookFive.price)
     }
 
-    @Test
-    @Order(7)
-    fun testFindAllWithoutToken() {
-        val specificationWithoutToken: RequestSpecification = RequestSpecBuilder()
-            .setBasePath("/api/person/v1")
-            .setPort(TestConfigs.SERVER_PORT)
-            .addFilter(RequestLoggingFilter(LogDetail.ALL))
-            .addFilter(ResponseLoggingFilter(LogDetail.ALL))
-            .build()
-        given()
-            .config(
-                RestAssuredConfig
-                    .config()
-                    .encoderConfig(
-                        EncoderConfig.encoderConfig()
-                            .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YML, ContentType.TEXT)
-                    )
-            )
-            .spec(specificationWithoutToken)
-            .contentType(TestConfigs.CONTENT_TYPE_YML)
-            .`when`()
-            .get()
-            .then()
-            .statusCode(403)
-    }
-
-    private fun mockPerson() {
-        person!!.firstName = "Richard"
-        person!!.lastName = "Stallman"
-        person!!.address = "New York City, New York, US"
-        person!!.gender = "Male"
+    private fun mockBook() {
+        book.title = "Docker Deep Dive"
+        book.author = "Nigel Poulton"
+        book.price = (java.lang.Double.valueOf(55.99))
+        book.launchDate = Date()
     }
 }

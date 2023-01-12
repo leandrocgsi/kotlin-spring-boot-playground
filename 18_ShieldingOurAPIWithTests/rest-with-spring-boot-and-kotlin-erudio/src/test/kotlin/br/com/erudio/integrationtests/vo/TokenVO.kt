@@ -4,7 +4,8 @@ import jakarta.xml.bind.annotation.XmlRootElement
 import java.util.*
 
 @XmlRootElement
-data class TokenVO (
+data class TokenVO(
+
     var username: String? = null,
     var authenticated: Boolean? = null,
     var created: Date? = null,

@@ -40,23 +40,24 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 	@Test
 	@Order(0)
 	fun authorization() {
-		val user = AccountCredentialsVO()
-		user.username = "leandro"
-		user.password = "admin123"
+		val user = AccountCredentialsVO(
+			username = "leandro",
+			password = "admin123"
+		)
 
 		token = given()
-			.basePath("/auth/signin")
-			.port(TestConfigs.SERVER_PORT)
-			.contentType(TestConfigs.CONTENT_TYPE_JSON)
-			.body(user)
-			.`when`()
-			.post()
-			.then()
-			.statusCode(200)
-			.extract()
-			.body()
-			.`as`(TokenVO::class.java)
-			.accessToken!!
+				.basePath("/auth/signin")
+				.port(TestConfigs.SERVER_PORT)
+					.contentType(TestConfigs.CONTENT_TYPE_JSON)
+					.body(user)
+				.`when`()
+					.post()
+						.then()
+					.statusCode(200)
+						.extract()
+						.body()
+					.`as`(TokenVO::class.java)
+						.accessToken!!
 	}
 
 	@Test
@@ -71,7 +72,8 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 			)
 			.addHeader(
 				TestConfigs.HEADER_PARAM_AUTHORIZATION,
-				"Bearer $token")
+				"Bearer $token"
+			)
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(RequestLoggingFilter(LogDetail.ALL))
@@ -122,8 +124,9 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 			)
 			.addHeader(
 				TestConfigs.HEADER_PARAM_AUTHORIZATION,
-				"Bearer $token")
-			.setBasePath("/api/person/v1")
+				"Bearer $token"
+			)
+				.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 				.addFilter(RequestLoggingFilter(LogDetail.ALL))
 				.addFilter(ResponseLoggingFilter(LogDetail.ALL))
@@ -156,7 +159,8 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 			)
 			.addHeader(
 				TestConfigs.HEADER_PARAM_AUTHORIZATION,
-				"Bearer $token")
+				"Bearer $token"
+			)
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(RequestLoggingFilter(LogDetail.ALL))
@@ -204,7 +208,8 @@ class PersonControllerCorsWithJson() : AbstractIntegrationTest() {
 			)
 			.addHeader(
 				TestConfigs.HEADER_PARAM_AUTHORIZATION,
-				"Bearer $token")
+				"Bearer $token"
+			)
 			.setBasePath("/api/person/v1")
 			.setPort(TestConfigs.SERVER_PORT)
 			.addFilter(RequestLoggingFilter(LogDetail.ALL))
