@@ -21,8 +21,9 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 @Configuration
 class SecurityConfig {
+
     @Autowired
-    private val tokenProvider: JwtTokenProvider? = null
+    lateinit var tokenProvider: JwtTokenProvider
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         val encoders: MutableMap<String, PasswordEncoder> = HashMap()
