@@ -1,12 +1,12 @@
 package br.com.erudio
 
-import java.util.HashMap
+// import java.util.HashMap
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder
+// import org.springframework.security.crypto.password.DelegatingPasswordEncoder
+// import org.springframework.security.crypto.password.PasswordEncoder
+// import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder
 
 
 @SpringBootApplication
@@ -25,5 +25,5 @@ fun main(args: Array<String>) {
 
 	val result = passwordEncoder.encode("foo-bar")
 	println("My hash $result")
-
+	*/
 }
