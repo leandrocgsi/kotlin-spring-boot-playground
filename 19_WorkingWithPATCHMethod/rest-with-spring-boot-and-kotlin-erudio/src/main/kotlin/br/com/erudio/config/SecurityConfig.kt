@@ -62,7 +62,7 @@ class SecurityConfig {
             }
                 .cors()
             .and()
-            .apply(JwtConfigurer(tokenProvider!!))
+            .apply(JwtConfigurer(tokenProvider))
             .and()
             .build()
     }
