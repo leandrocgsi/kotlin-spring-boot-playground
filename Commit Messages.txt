@@ -16,25 +16,11 @@ https://stackoverflow.com/questions/19595067/git-add-commit-and-push-commands-in
 18_ShieldingOurAPIWithTests/                      -> git acmp 'Shielding our API with Rest Assured, Testcontainers and JUnit 5'
 19_WorkingWithPATCHMethod/                        -> git acmp 'Working with PATCH Method'
 20_WorkingWithPagination/                         -> git acmp 'Implementing Pagination Search'
-21_WorkingWithFiles/                              -> git commit -m'Implementing Upload and Download Files'
-22_DockerizingOurApp/                             -> git commit -m'Dockerizing our Application'
-23_DeploingOurAppToAWS/                           -> git commit -m'Deploy to Amazon AWS'
-24_ContinuousIntegrationWithAWS/                  -> git commit -m'Continuous Integration with Github, Github Actions, Amazon ECR and ECS'
-25A_MavenArchetypes_OriginalProject/              -> git commit -m'Working with Archetypes'
-25B_MavenArchetypes_DestinationProject/           -> git commit -m'Working with Archetypes'
-26A_ConnectingToOtherDatabases_PostgreSQL/        -> git commit -m'Connecting To Other Databases - PostgreSQL'
-26B_ConnectingToOtherDatabases_SQL_Server/        -> git commit -m'Connecting To Other Databases - SQL Server'
-
-0509 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
-0807 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
-0906 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
-1410 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
-1514 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
-1716 [UPDATES] Diferenças entre o Spring Boot 3 Milestone e Spring Boot 3.0.1
-1717 [UPDATES] Testando a APP após Upgrade para Kotlin 1.8.0 e Spring Boot 3.0.1
-
-3007 Como Acessar o Código de Outras Branchs
-
-E:\Dropbox\Udemy Courses\CamtasiaRecords\07_SpringBootJava
-
-kotlin_1.8_spring_boot_3.0.1
+21_WorkingWithFiles/                              -> git acmp 'Implementing Upload and Download Files'
+22_DockerizingOurApp/                             -> git acmp 'Dockerizing our Application'
+23_DeploingOurAppToAWS/                           -> git acmp 'Deploy to Amazon AWS'
+24_ContinuousIntegrationWithAWS/                  -> git acmp 'Continuous Integration with Github, Github Actions, Amazon ECR and ECS'
+25A_MavenArchetypes_OriginalProject/              -> git acmp 'Working with Archetypes'
+25B_MavenArchetypes_DestinationProject/           -> git acmp 'Working with Archetypes'
+26A_ConnectingToOtherDatabases_PostgreSQL/        -> git acmp 'Connecting To Other Databases - PostgreSQL'
+26B_ConnectingToOtherDatabases_SQL_Server/        -> git acmp 'Connecting To Other Databases - SQL Server'
